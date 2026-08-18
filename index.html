@@ -1364,6 +1364,122 @@
         }
         function openAuthModal() { document.getElementById('auth-modal').classList.add('show'); }
         function closeAuthModal() { document.getElementById('auth-modal').classList.remove('show'); }
+
+        // --- Local Account System (no Firebase/API required) ---
+        let currentUser = null;
+        let isSignUpMode = false;
+
+        async function hashPassword(password) {
+            const data = new TextEncoder().encode(password);
+            const digest = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function getLocalUsers() {
+            try {
+                return JSON.parse(localStorage.getItem('synco_local_users')) || {};
+            } catch (_) {
+                return {};
+            }
+        }
+
+        function saveLocalUsers(users) {
+            localStorage.setItem('synco_local_users', JSON.stringify(users));
+        }
+
+        function getSessionEmail() {
+            return localStorage.getItem('synco_local_session') || '';
+        }
+
+        function updateAuthUI() {
+            const accountBtn = document.getElementById('account-btn');
+            const signedOut = document.getElementById('auth-signed-out-view');
+            const signedIn = document.getElementById('auth-signed-in-view');
+            const emailDisplay = document.getElementById('user-email-display');
+            if (!accountBtn || !signedOut || !signedIn || !emailDisplay) return;
+
+            const sessionEmail = getSessionEmail();
+            currentUser = sessionEmail || null;
+            if (currentUser) {
+                accountBtn.style.color = 'var(--success)';
+                signedOut.style.display = 'none';
+                signedIn.style.display = 'block';
+                emailDisplay.innerText = currentUser;
+            } else {
+                accountBtn.style.color = 'var(--text-main)';
+                signedOut.style.display = 'block';
+                signedIn.style.display = 'none';
+                emailDisplay.innerText = '';
+            }
+        }
+
+        window.handleAuthSubmit = async function() {
+            const email = document.getElementById('auth-email').value.trim().toLowerCase();
+            const password = document.getElementById('auth-password').value;
+            if (!email || !password) {
+                alert('Please fill in both email and password.');
+                return;
+            }
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters.');
+                return;
+            }
+
+            const users = getLocalUsers();
+            const passwordHash = await hashPassword(password);
+
+            if (isSignUpMode) {
+                if (users[email]) {
+                    alert('An account with that email already exists. Please sign in instead.');
+                    return;
+                }
+                users[email] = {
+                    passwordHash,
+                    createdAt: new Date().toISOString()
+                };
+                saveLocalUsers(users);
+                localStorage.setItem('synco_local_session', email);
+                document.getElementById('auth-email').value = '';
+                document.getElementById('auth-password').value = '';
+                updateAuthUI();
+                closeAuthModal();
+                alert('Account created successfully.');
+            } else {
+                if (!users[email]) {
+                    alert('No account found for that email. Switch to Sign Up first.');
+                    return;
+                }
+                if (users[email].passwordHash !== passwordHash) {
+                    alert('Incorrect password.');
+                    return;
+                }
+                localStorage.setItem('synco_local_session', email);
+                document.getElementById('auth-email').value = '';
+                document.getElementById('auth-password').value = '';
+                updateAuthUI();
+                closeAuthModal();
+                alert('Signed in successfully.');
+            }
+        };
+
+        window.handleSignOut = function() {
+            localStorage.removeItem('synco_local_session');
+            currentUser = null;
+            updateAuthUI();
+            closeAuthModal();
+        };
+
+        window.toggleAuthMode = function() {
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('auth-title').innerText = isSignUpMode ? 'Create Account' : 'Account Sign In';
+            document.getElementById('auth-submit-btn').innerText = isSignUpMode ? 'Sign Up' : 'Sign In';
+            document.getElementById('auth-toggle-btn').innerText = isSignUpMode
+                ? 'Already have an account? Sign In'
+                : "Don't have an account? Sign Up";
+        };
+
+        // Local accounts are intentionally device/browser-local; there is no cloud sync.
+        updateAuthUI();
         function openSearchModal() { document.getElementById('search-modal').classList.add('show'); performGlobalSearch(); }
         function closeSearchModal() { document.getElementById('search-modal').classList.remove('show'); }
         function toggleTheme() {
