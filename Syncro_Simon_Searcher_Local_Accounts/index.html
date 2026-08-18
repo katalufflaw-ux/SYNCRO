@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syncro</title>
+    <link rel="icon" type="image/png" href="SYNCRO.png">
+    <!-- Imported Google Fonts for Rich Text Editor -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@400;700&family=Cinzel:wght@400;700&family=Comfortaa:wght@400;700&family=Dancing+Script:wght@400;700&family=Fira+Code&family=Fira+Sans&family=Great+Vibes&family=Inconsolata&family=Inter:wght@400;600;700&family=Kanit&family=Lato&family=Lobster&family=Lora:ital,wght@0,400;0,700;1,400&family=Merriweather&family=Montserrat:wght@400;600;700&family=Noto+Sans&family=Nunito&family=Open+Sans:wght@400;600&family=Oswald&family=Pacifico&family=Permanent+Marker&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@400;600;700&family=Press+Start+2P&family=PT+Sans&family=PT+Serif&family=Quicksand&family=Raleway&family=Roboto:wght@400;500;700&family=Rubik&family=Shadows+Into+Light&family=Space+Mono&family=Work+Sans&display=swap');
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+        }
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-light: #312e81;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 950px;
+            transition: max-width 0.3s ease, padding 0.3s ease;
+        }
+        body.compact-mode {
+            padding: 10px;
+            background-color: transparent;
+        }
+        body.compact-mode .app-container {
+            max-width: 380px;
+            margin: 0 auto;
+        }
+        body.compact-mode .card {
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        body.compact-mode .digital-display {
+            font-size: 2.2rem;
+            margin: 4px 0 10px 0;
+        }
+        body.compact-mode .nav-tabs {
+            padding: 0;
+            margin-bottom: 14px;
+            gap: 8px;
+        }
+        body.compact-mode .nav-tab {
+            padding: 6px 2px;
+            font-size: 0.78rem;
+        }
+        body.compact-mode .app-header h2 {
+            font-size: 1rem !important;
+        }
+        body.compact-mode .header-btn {
+            padding: 6px;
+        }
+        /* Header */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .header-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        summary::-webkit-details-marker,
+        summary::marker { display: none; }
+        .icon-svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Syncro branding */
+        .brand-lockup { display:flex; align-items:center; gap:10px; min-width:0; }
+        .brand-lockup img { width:42px; height:42px; object-fit:cover; border-radius:10px; flex-shrink:0; }
+        .brand-lockup h2 { font-size:1.25rem; font-weight:800; letter-spacing:-0.02em; }
+        .simon-avatar-img { width:32px; height:32px; border-radius:50%; object-fit:cover; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.12); }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            background: transparent;
+            padding: 0;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            box-shadow: none;
+            margin-bottom: 24px;
+            gap: 12px;
+        }
+        .nav-tab {
+            flex: 1;
+            padding: 8px 6px;
+            border: none;
+            border-bottom: 2px solid transparent;
+            background: none;
+            font-weight: 500;
+            color: var(--text-muted);
+            border-radius: 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-tab.active {
+            background-color: transparent;
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            font-weight: 600;
+        }
+        .nav-tab:hover:not(.active) {
+            background-color: transparent;
+            color: var(--text-main);
+        }
+        .tab-view { display: none; }
+        .tab-view.active { display: block; }
+        
+        /* File Type Sub-tabs (Word, PowerPoint, Excel) */
+        .file-type-switcher {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .file-type-btn {
+            flex: 1;
+            padding: 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .file-type-btn.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        .file-workspace { display: none; }
+        .file-workspace.active { display: block; }
+        /* Shared Card & Inputs */
+        .card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="email"], input[type="password"], input[type="number"], select {
+            background: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus { border-color: var(--primary); }
+        
+        /* Editor Styling */
+        .editor-container {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--card-bg);
+            transition: all 0.3s ease;
+        }
+        .editor-container.fullscreen-editor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 10000;
+            border-radius: 0;
+            border: none;
+            margin: 0;
+            padding: 20px;
+            box-shadow: none;
+        }
+        .editor-container.fullscreen-editor .rich-editor,
+        .editor-container.fullscreen-editor .excel-grid-container {
+            flex-grow: 1;
+            min-height: calc(100vh - 140px);
+            max-height: none;
+            font-size: 1.1rem;
+            padding: 24px;
+        }
+        /* Office Ribbon Styles */
+        .office-ribbon-tabs {
+            display: flex;
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border);
+            padding: 0 10px;
+            gap: 4px;
+            overflow-x: auto;
+        }
+        .office-tab-btn {
+            background: none;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        .office-tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: var(--card-bg);
+        }
+        .office-ribbon-content {
+            display: none;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+        }
+        .office-ribbon-content.active {
+            display: flex;
+        }
+        .word-ribbon {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+        }
+        .ribbon-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding-right: 8px;
+            border-right: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+        .ribbon-group:last-child {
+            border-right: none;
+        }
+        .toolbar-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            min-width: 28px;
+            height: 28px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+        .toolbar-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .toolbar-btn.active-mode {
+            background: var(--primary);
+            color: white;
+        }
+        .rich-editor {
+            min-height: 180px;
+            max-height: 400px;
+            background: var(--card-bg);
+            color: var(--text-main);
+            padding: 16px;
+            font-size: 0.95rem;
+            outline: none;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+        .rich-editor[placeholder]:empty:before {
+            content: attr(placeholder);
+            color: var(--text-muted);
+            pointer-events: none;
+            display: block;
+        }
+        .note-content table, .rich-editor table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+        .note-content th, .note-content td, .rich-editor th, .rich-editor td {
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            text-align: left;
+        }
+        .note-content th, .rich-editor th {
+            background-color: var(--bg-color);
+            font-weight: 600;
+        }
+        .note-content img, .rich-editor img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin: 8px 0;
+            display: block;
+        }
+        .note-content ul, .note-content ol, .rich-editor ul, .rich-editor ol {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: opacity 0.2s, background-color 0.2s;
+            box-shadow: none;
+        }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            color: var(--text-main);
+            border-color: var(--text-muted);
+        }
+        /* Excel Spreadsheet Grid View */
+        .excel-grid-container {
+            overflow-x: auto;
+            max-height: 400px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+        }
+        .excel-table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 0.85rem;
+        }
+        .excel-table th, .excel-table td {
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            min-width: 90px;
+            height: 28px;
+            text-align: center;
+        }
+        .excel-table th {
+            background: var(--bg-color);
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .excel-table td[contenteditable="true"]:focus {
+            outline: 2px solid var(--primary);
+            background: var(--card-bg);
+        }
+        /* Notes & Tasks */
+        .notes-list { display: flex; flex-direction: column; gap: 12px; }
+        .note {
+            background: var(--card-bg);
+            padding: 16px 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            word-break: break-word;
+            line-height: 1.5;
+        }
+        .note-content { flex-grow: 1; padding-right: 12px; overflow-x: auto; }
+        .note-time { display: block; font-size: 0.75rem; color: var(--text-muted); margin-top: 10px; }
+        .note-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .btn-action {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+        .btn-action:hover { color: var(--primary); }
+        .btn-delete {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1;
+            padding: 4px;
+            border-radius: 4px;
+            transition: color 0.2s;
+        }
+        .btn-delete:hover { color: var(--danger); }
+        .empty-state { text-align: center; color: var(--text-muted); font-size: 0.9rem; padding: 20px 0; }
+        .task-item {
+            background: var(--card-bg);
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .task-item.completed span { text-decoration: line-through; color: var(--text-muted); }
+        .progress-bar-bg {
+            background: var(--bg-color);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+        }
+        .progress-bar-fill { background: var(--success); height: 100%; width: 0%; transition: width 0.3s ease; }
+        /* Calendar View */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .cal-nav { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--text-muted); padding: 4px 8px; border-radius: 4px; transition: color 0.2s; }
+        .cal-nav:hover { color: var(--primary); }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
+        .cal-day-name { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); padding-bottom: 8px; }
+        .cal-date {
+            aspect-ratio: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; font-size: 0.9rem;
+            border-radius: 8px; cursor: pointer; position: relative; user-select: none;
+        }
+        .cal-date:hover:not(.empty) { background-color: var(--bg-color); }
+        .cal-date.selected { background-color: var(--primary); color: white; font-weight: 600; }
+        .cal-date.today:not(.selected) { border: 1px solid var(--primary); color: var(--primary); font-weight: 600; }
+        .cal-date.has-notes::after {
+            content: ''; width: 5px; height: 5px; background-color: var(--primary);
+            border-radius: 50%; position: absolute; bottom: 4px;
+        }
+        .cal-date.selected.has-notes::after { background-color: white; }
+        /* Timer Sub-Tabs */
+        .sub-tabs { display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+        .sub-tab {
+            padding: 6px 8px; border: none; background: none; font-weight: 500;
+            color: var(--text-muted); cursor: pointer; border-radius: 0; font-size: 0.9rem;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+        }
+        .sub-tab.active { background-color: transparent; color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+        .sub-view { display: none; }
+        .sub-view.active { display: block; }
+        .digital-display {
+            font-size: 3.2rem; font-weight: 700; text-align: center;
+            font-variant-numeric: tabular-nums; margin: 8px 0 16px 0; color: var(--text-main);
+        }
+        .pomo-mode-badge { text-align: center; font-weight: 600; font-size: 0.9rem; color: var(--primary); height: 20px; }
+        .music-indicator { display: none; justify-content: center; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--success); font-weight: 600; margin-bottom: 12px; }
+        .music-indicator.show { display: flex; }
+        .controls-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+        .pomo-menu { display: none; justify-content: center; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
+        .pomo-menu.show { display: flex; flex-wrap: wrap; }
+        .pomo-opt-btn {
+            background-color: transparent; color: var(--text-muted);
+            border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px;
+            font-weight: 500; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
+        }
+        .pomo-opt-btn:hover { background-color: var(--primary-light); color: var(--primary); border-color: transparent; }
+        /* Modals */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 9998;
+            justify-content: center; align-items: center; animation: fadeIn 0.3s ease;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-card {
+            background: var(--card-bg); padding: 24px; border-radius: 16px;
+            max-width: 400px; width: 90%; box-shadow: var(--shadow); border: 1px solid var(--border);
+        }
+        .auth-toggle-link { color: var(--primary); cursor: pointer; font-size: 0.85rem; font-weight: 600; margin-top: 10px; display: inline-block; }
+        .auth-toggle-link:hover { text-decoration: underline; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
+        .mission-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+        .mission-info h5 { font-size: 0.9rem; font-weight: 600; margin-bottom: 2px; color: var(--text-main); }
+        .mission-info p { font-size: 0.75rem; color: var(--text-muted); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <canvas id="confetti-canvas"></canvas>
+    <!-- Audio Element -->
+    <audio id="break-audio" loop src="https://actions.google.com/sounds/v1/ambiences/outdoor_gentle_breeze.ogg"></audio>
+    <!-- Celebration Modal -->
+    <div class="modal-overlay" id="task-modal">
+        <div class="modal-card" style="text-align: center;">
+            <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 8px;">All tasks completed</h3>
+            <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 20px;">Great job staying focused and crushing your goals today.</p>
+            <button class="btn-primary" style="width: 100%;" onclick="closeCelebrationModal()">Done</button>
+        </div>
+    </div>
+    <!-- Profile & Missions Modal -->
+    <div class="modal-overlay" id="profile-modal">
+        <div class="modal-card" style="max-width: 420px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h3 style="font-size: 1.2rem;">User Profile & Missions</h3>
+                <button class="btn-delete" style="font-size: 1.5rem;" onclick="closeProfileModal()">&times;</button>
+            </div>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="position: relative; display: inline-block; cursor: pointer;" onclick="document.getElementById('avatar-file-input').click()" title="Click to change profile picture">
+                    <img id="modal-avatar-img" src="" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">
+                    <div style="position: absolute; bottom: 0; right: 0; background: var(--primary); color: white; border-radius: 50%; padding: 4px; font-size: 0.7rem;">📷</div>
+                </div>
+                <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="updateProfileAvatar(event)">
+                <h4 id="profile-level-text" style="margin-top: 10px; font-size: 1.1rem; font-weight: 700;">Level 1</h4>
+                <p id="profile-xp-text" style="font-size: 0.85rem; color: var(--text-muted);">0 / 100 XP</p>
+                <div class="progress-bar-bg" style="margin-top: 8px;">
+                    <div class="progress-bar-fill" id="profile-xp-bar" style="width: 0%;"></div>
+                </div>
+                <!-- Title Selection Section -->
+                <div id="title-selection-section" style="margin-top: 15px; display: none; text-align: left;">
+                    <h4 style="font-size: 0.95rem; margin-bottom: 6px; color: var(--text-main);">Level 50 Titles Unlocked</h4>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px;">Choose one of your three legendary titles:</p>
+                    <select id="profile-title-select" onchange="selectUserTitle(this.value)" style="width: 100%;">
+                        <option value="">-- No Title Selected --</option>
+                        <option value="The Goat">The Goat</option>
+                        <option value="The Honored One">The Honored One</option>
+                        <option value="The King Of Syncro">The King Of Syncro</option>
+                    </select>
+                </div>
+            </div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 10px; color: var(--text-main);">Daily & Achievement Missions</h4>
+            <div id="missions-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto;">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+    </div>
+    <!-- Account Modal -->
+    <div class="modal-overlay" id="auth-modal">
+        <div class="modal-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h3 id="auth-title" style="font-size: 1.2rem;">Account Sign In</h3>
+                <button class="btn-delete" style="font-size: 1.5rem;" onclick="closeAuthModal()">&times;</button>
+            </div>
+            <div id="auth-signed-out-view">
+                <input type="email" id="auth-email" placeholder="Email address" style="margin-bottom: 10px; width:100%;">
+                <input type="password" id="auth-password" placeholder="Password" style="margin-bottom: 16px; width:100%;">
+                <button class="btn-primary" id="auth-submit-btn" style="width: 100%; margin-bottom: 10px;" onclick="handleAuthSubmit()">Sign In</button>
+                <div style="text-align:center;">
+                    <span class="auth-toggle-link" id="auth-toggle-btn" onclick="toggleAuthMode()">Don't have an account? Sign Up</span>
+                </div>
+            </div>
+            <div id="auth-signed-in-view" style="display: none; text-align: center;">
+                <p style="margin-bottom: 6px; font-weight: 600;">Signed in as:</p>
+                <p id="user-email-display" style="color: var(--primary); font-weight: 700; margin-bottom: 20px;"></p>
+                <button class="btn-secondary" style="width: 100%;" onclick="handleSignOut()">Sign Out</button>
+            </div>
+        </div>
+    </div>
+    <!-- Global Search Modal -->
+    <div class="modal-overlay" id="search-modal">
+        <div class="modal-card" style="max-width: 600px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Search Syncro
+                </h3>
+                <button class="btn-delete" style="font-size: 1.5rem;" onclick="closeSearchModal()">&times;</button>
+            </div>
+            <input type="text" id="global-search-input" placeholder="Type to search notes, calendar & tasks..." oninput="performGlobalSearch()" autofocus style="width:100%;">
+            <div id="global-search-results" style="margin-top: 16px; max-height: 50vh; overflow-y: auto;"></div>
+        </div>
+    </div>
+    <div class="app-container">
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="brand-lockup"><img src="SYNCRO.png" alt="Syncro logo"><h2>Syncro</h2></div>
+            <div class="header-actions">
+                <button class="header-btn" onclick="openProfileModal()" title="Profile & Missions" style="padding: 4px; border-radius: 50%;">
+                    <img id="header-avatar-img" src="" alt="Profile" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+                </button>
+                <button class="header-btn" onclick="openSearchModal()" title="Search All">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+                <button class="header-btn" onclick="toggleCompactMode()" title="Toggle Compact Mode">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
+                </button>
+                <details style="position: relative; display: inline-block;">
+                    <summary class="header-btn" title="Download App" style="list-style: none; cursor: pointer;">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </summary>
+                    <div style="position: absolute; right: 0; top: 110%; background: var(--card-bg); border: 1px solid var(--border); padding: 16px; border-radius: 12px; box-shadow: var(--shadow); width: 260px; z-index: 1000; font-size: 0.85rem;">
+                        <h4 style="margin-bottom: 8px; font-size: 0.95rem;">How to Install App</h4>
+                        <ol style="padding-left: 18px; line-height: 1.5; color: var(--text-main);">
+                            <li style="margin-bottom: 4px;">Click the <strong>3 dots (⋮)</strong> menu in browser.</li>
+                            <li style="margin-bottom: 4px;">Click <strong>Cast, save and share</strong>.</li>
+                            <li>Click <strong>Install page as app…</strong></li>
+                        </ol>
+                    </div>
+                </details>
+                <button class="header-btn" onclick="toggleTheme()" id="theme-btn" title="Toggle Theme">
+                    <svg class="icon-svg" id="theme-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+                <button class="header-btn" onclick="openAuthModal()" id="account-btn" title="Account">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </button>
+            </div>
+        </div>
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchMainTab('notes', event)">Files / Notes</button>
+            <button class="nav-tab" onclick="switchMainTab('tasks', event)">Tasks</button>
+            <button class="nav-tab" onclick="switchMainTab('calendar', event)">Calendar</button>
+            <button class="nav-tab" onclick="switchMainTab('tools', event)">Timer</button>
+            <button class="nav-tab" onclick="switchMainTab('simon', event)">Simon Searcher</button>
+        </div>
+        <!-- 1. FILES & NOTES TAB WITH WORD, POWERPOINT, AND EXCEL EDITORS -->
+        <div id="view-notes" class="tab-view active">
+            <!-- File Type Switcher -->
+            <div class="file-type-switcher">
+                <button class="file-type-btn active" onclick="switchFileType('word', event)">📄 Word Document</button>
+                <button class="file-type-btn" onclick="switchFileType('ppt', event)">📊 PowerPoint Presentation</button>
+                <button class="file-type-btn" onclick="switchFileType('excel', event)">📈 Excel Spreadsheet</button>
+            </div>
+            <!-- WORD WORKSPACE -->
+            <div id="workspace-word" class="file-workspace active">
+                <div class="card" id="notes-card-container">
+                    <div class="editor-container" id="editor-container-main">
+                        <div class="word-ribbon">
+                            <div class="ribbon-group">
+                                <button type="button" class="toolbar-btn" onclick="formatDoc('cut')" title="Cut">Cut</button>
+                                <button type="button" class="toolbar-btn" onclick="formatDoc('copy')" title="Copy">Copy</button>
+                            </div>
+                            <div class="ribbon-group">
+                                <button type="button" class="toolbar-btn" id="fullscreen-btn" onclick="toggleEditorFullscreen('editor-container-main', 'fullscreen-btn')" title="Toggle Fullscreen Mode">
+                                    <svg class="icon-svg" viewBox="0 0 24 24">
+                                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                                    </svg>
+                                    <span>Fullscreen</span>
+                                </button>
+                            </div>
+                            <div class="ribbon-group">
+                                <select onchange="formatDoc('fontName', this.value)" title="Font Family" style="width: 130px;">
+                                    <option value="Calibri, sans-serif">Calibri</option>
+                                    <option value="Arial, sans-serif">Arial</option>
+                                    <option value="'Segoe UI', sans-serif">Segoe UI</option>
+                                    <option value="Georgia, serif">Georgia</option>
+                                </select>
+                                <select onchange="formatDoc('fontSize', this.value)" title="Font Size" style="width: 55px;">
+                                    <option value="3" selected>12pt</option>
+                                    <option value="4">14pt</option>
+                                    <option value="5">18pt</option>
+                                    <option value="6">24pt</option>
+                                </select>
+                            </div>
+                            <div class="ribbon-group">
+                                <button type="button" class="toolbar-btn" onclick="formatDoc('bold')" title="Bold"><b>B</b></button>
+                                <button type="button" class="toolbar-btn" onclick="formatDoc('italic')" title="Italic"><i>I</i></button>
+                                <button type="button" class="toolbar-btn" onclick="formatDoc('underline')" title="Underline"><u>U</u></button>
+                            </div>
+                            <div class="ribbon-group">
+                                <button type="button" class="toolbar-btn" onclick="formatDoc('insertUnorderedList')" title="Bulleted List">• List</button>
+                                <button type="button" class="toolbar-btn" onclick="insertTable()" title="Insert Table">Table</button>
+                                <button type="button" class="toolbar-btn" onclick="triggerImageUpload()" title="Insert Image">Image</button>
+                                <input type="file" id="note-image-input" accept="image/*" style="display:none;" onchange="insertUploadedImage(event)">
+                            </div>
+                        </div>
+                        <div id="note-editor" class="rich-editor" contenteditable="true" placeholder="Type your Word note or document content here..."></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+                        <button class="btn-secondary" onclick="downloadNotesAsWord()" title="Download All Notes as Word Document">
+                            Download Word (.doc)
+                        </button>
+                        <button class="btn-primary" onclick="addNote()">Save Word Note</button>
+                    </div>
+                </div>
+            </div>
+            <!-- POWERPOINT WORKSPACE -->
+            <div id="workspace-ppt" class="file-workspace">
+                <div class="card">
+                    <div class="editor-container" id="editor-container-ppt">
+                        <div class="office-ribbon-tabs">
+                            <button class="office-tab-btn" onclick="switchPptTab('file')">File</button>
+                            <button class="office-tab-btn active" onclick="switchPptTab('home')">Home</button>
+                            <button class="office-tab-btn" onclick="switchPptTab('insert')">Insert</button>
+                            <button class="office-tab-btn" onclick="switchPptTab('transitions')">Transitions</button>
+                            <button class="office-tab-btn" onclick="switchPptTab('animations')">Animations</button>
+                            <button class="office-tab-btn" onclick="switchPptTab('slideshow')">Slide Show</button>
+                        </div>
+                        <div id="ppt-tab-home" class="office-ribbon-content active">
+                            <div class="ribbon-group">
+                                <button class="toolbar-btn" onclick="formatPpt('cut')">Cut</button>
+                                <button class="toolbar-btn" onclick="formatPpt('copy')">Copy</button>
+                            </div>
+                            <div class="ribbon-group">
+                                <button class="toolbar-btn" id="fullscreen-btn-ppt" onclick="toggleEditorFullscreen('editor-container-ppt', 'fullscreen-btn-ppt')">Fullscreen</button>
+                            </div>
+                            <div class="ribbon-group">
+                                <button class="toolbar-btn" onclick="insertPptSlide()">New Slide</button>
+                                <select style="width:85px;"><option>Layout</option></select>
+                            </div>
+                            <div class="ribbon-group">
+                                <select onchange="formatPpt('fontName', this.value)" style="width:110px;">
+                                    <option>Calibri</option><option>Arial</option><option>Segoe UI</option>
+                                </select>
+                                <button class="toolbar-btn" onclick="formatPpt('bold')"><b>B</b></button>
+                                <button class="toolbar-btn" onclick="formatPpt('italic')"><i>I</i></button>
+                                <button class="toolbar-btn" onclick="formatPpt('underline')"><u>U</u></button>
+                            </div>
+                            <div class="ribbon-group">
+                                <button class="toolbar-btn" onclick="insertPptTable()">Table</button>
+                                <button class="toolbar-btn" onclick="triggerPptImage()">Image</button>
+                                <input type="file" id="ppt-img-input" accept="image/*" style="display:none;" onchange="insertPptImageFile(event)">
+                            </div>
+                        </div>
+                        <div id="ppt-tab-transitions" class="office-ribbon-content">
+                            <div class="ribbon-group">
+                                <span style="font-size:0.8rem; font-weight:600; margin-right:4px;">Transition to this Slide:</span>
+                                <select id="ppt-transition-select" style="width: 200px;">
+                                    <option value="None">None</option>
+                                    <option value="Cut">Cut</option>
+                                    <option value="Fade">Fade</option>
+                                    <option value="Push">Push</option>
+                                    <option value="Wipe">Wipe</option>
+                                    <option value="Split">Split</option>
+                                    <option value="Reveal">Reveal</option>
+                                    <option value="Random Bars">Random Bars</option>
+                                    <option value="Shape">Shape</option>
+                                    <option value="Uncover">Uncover</option>
+                                    <option value="Cover">Cover</option>
+                                    <option value="Flash">Flash</option>
+                                    <option value="Dissolve">Dissolve</option>
+                                    <option value="Checkerboard">Checkerboard</option>
+                                    <option value="Comb">Comb</option>
+                                    <option value="Fly Through">Fly Through</option>
+                                    <option value="Ripple">Ripple</option>
+                                    <option value="Honeycomb">Honeycomb</option>
+                                    <option value="Glitter">Glitter</option>
+                                    <option value="Vortex">Vortex</option>
+                                    <option value="Fracture">Fracture</option>
+                                    <option value="Page Curl">Page Curl</option>
+                                    <option value="Origami">Origami</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="ppt-tab-animations" class="office-ribbon-content">
+                            <div class="ribbon-group">
+                                <span style="font-size:0.8rem; font-weight:600; margin-right:4px;">Add Animation:</span>
+                                <select id="ppt-animation-select" style="width: 200px;">
+                                    <option value="None">None</option>
+                                    <option value="Appear">Appear</option>
+                                    <option value="Fade">Fade</option>
+                                    <option value="Fly In">Fly In</option>
+                                    <option value="Float In">Float In</option>
+                                    <option value="Split">Split</option>
+                                    <option value="Wipe">Wipe</option>
+                                    <option value="Shape">Shape</option>
+                                    <option value="Wheel">Wheel</option>
+                                    <option value="Random Bars">Random Bars</option>
+                                    <option value="Grow & Turn">Grow & Turn</option>
+                                    <option value="Zoom">Zoom</option>
+                                    <option value="Swivel">Swivel</option>
+                                    <option value="Bounce">Bounce</option>
+                                    <option value="Pulse">Pulse</option>
+                                    <option value="Color Pulse">Color Pulse</option>
+                                    <option value="Teeter">Teeter</option>
+                                    <option value="Spin">Spin</option>
+                                    <option value="Grow/Shrink">Grow/Shrink</option>
+                                    <option value="Shimmer">Shimmer</option>
+                                    <option value="Flash Bulb">Flash Bulb</option>
+                                    <option value="Wave">Wave</option>
+                                    <option value="Drop">Drop</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="ppt-tab-insert" class="office-ribbon-content"><div class="ribbon-group"><button class="toolbar-btn" onclick="insertPptTable()">Insert Table</button><button class="toolbar-btn" onclick="triggerPptImage()">Insert Image</button></div></div>
+                        <div id="ppt-tab-slideshow" class="office-ribbon-content"><div class="ribbon-group"><button class="toolbar-btn" onclick="alert('Starting Slide Show...')">From Beginning</button></div></div>
+                        <div id="ppt-tab-file" class="office-ribbon-content"><div class="ribbon-group"><span style="font-size:0.8rem;">Save, Print & Share Options</span></div></div>
+                        <div id="ppt-editor" class="rich-editor" contenteditable="true" placeholder="Click to add title and subtitle or insert tables/images for your PowerPoint slide..."></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+                        <button class="btn-secondary" onclick="downloadPowerPoint()">Download PowerPoint (.pptx)</button>
+                        <button class="btn-primary" onclick="addNote()">Save Presentation Note</button>
+                    </div>
+                </div>
+            </div>
+            <!-- EXCEL WORKSPACE -->
+            <div id="workspace-excel" class="file-workspace">
+                <div class="card">
+                    <div class="editor-container" id="editor-container-excel">
+                        <div class="office-ribbon-tabs">
+                            <button class="office-tab-btn" onclick="switchExcelTab('file')">File</button>
+                            <button class="office-tab-btn active" onclick="switchExcelTab('home')">Home</button>
+                            <button class="office-tab-btn" onclick="switchExcelTab('insert')">Insert</button>
+                        </div>
+                        <div id="excel-tab-home" class="office-ribbon-content active">
+                            <div class="ribbon-group">
+                                <button class="toolbar-btn" onclick="alert('Copied')">Copy</button>
+                                <button class="toolbar-btn" onclick="alert('Cut')">Cut</button>
+                            </div>
+                            <div class="ribbon-group">
+                                <button class="toolbar-btn" id="fullscreen-btn-excel" onclick="toggleEditorFullscreen('editor-container-excel', 'fullscreen-btn-excel')">Fullscreen</button>
+                            </div>
+                            <div class="ribbon-group">
+                                <select style="width:110px;"><option>Aptos Narrow</option><option>Calibri</option></select>
+                                <select style="width:50px;"><option>11</option><option>12</option></select>
+                                <button class="toolbar-btn" onclick="formatExcel('bold')"><b>B</b></button>
+                                <button class="toolbar-btn" onclick="formatExcel('italic')"><i>I</i></button>
+                                <button class="toolbar-btn" onclick="formatExcel('underline')"><u>U</u></button>
+                            </div>
+                            <div class="ribbon-group">
+                                <button class="toolbar-btn" onclick="insertExcelTable()">Insert Table</button>
+                                <button class="toolbar-btn" onclick="triggerExcelImage()">Insert Image</button>
+                                <input type="file" id="excel-img-input" accept="image/*" style="display:none;" onchange="insertExcelImageFile(event)">
+                            </div>
+                            <div class="ribbon-group">
+                                <button class="toolbar-btn" onclick="autoSumExcel()">AutoSum</button>
+                            </div>
+                        </div>
+                        <div id="excel-tab-insert" class="office-ribbon-content"><div class="ribbon-group"><button class="toolbar-btn" onclick="insertExcelTable()">Table</button><button class="toolbar-btn" onclick="triggerExcelImage()">Image</button></div></div>
+                        <div id="excel-tab-file" class="office-ribbon-content"><div class="ribbon-group"><span style="font-size:0.8rem;">Save As, Export & Share</span></div></div>
+                        <div class="excel-grid-container" id="excel-grid-container">
+                            <table class="excel-table" id="excel-spreadsheet">
+                                <thead>
+                                    <tr>
+                                        <th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><th>1</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                                    <tr><th>2</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                                    <tr><th>3</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                                    <tr><th>4</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                                    <tr><th>5</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                                    <tr><th>6</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                                    <tr><th>7</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                                    <tr><th>8</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                                    <tr><th>9</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                                    <tr><th>10</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+                        <button class="btn-secondary" onclick="downloadExcel()">Download Microsoft Excel (.xls)</button>
+                        <button class="btn-primary" onclick="addNote()">Save Spreadsheet Note</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Saved Files/Notes List -->
+            <div id="all-notes-container" class="notes-list" style="margin-top: 20px;"></div>
+        </div>
+        <!-- 2. TASKS TAB -->
+        <div id="view-tasks" class="tab-view">
+            <div class="card">
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="task-input" placeholder="Add a new task..." onkeydown="if(event.key==='Enter') addTask()" style="width:100%;">
+                    <button class="btn-primary" onclick="addTask()">Add</button>
+                </div>
+            </div>
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.85rem; color:var(--text-muted);">
+                    <span>Progress</span>
+                    <span id="task-progress-text">0% Completed</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="task-progress-fill"></div>
+                </div>
+                <div id="tasks-container"></div>
+            </div>
+        </div>
+        <!-- 3. CALENDAR TAB -->
+        <div id="view-calendar" class="tab-view">
+            <div class="card">
+                <div class="cal-header">
+                    <button class="cal-nav" onclick="changeMonth(-1)">&lt;</button>
+                    <h3 id="cal-month-year"></h3>
+                    <button class="cal-nav" onclick="changeMonth(1)">&gt;</button>
+                </div>
+                <div class="cal-grid" id="cal-grid"></div>
+            </div>
+            <div class="card">
+                <h4 id="selected-date-title" style="margin-bottom:12px; color:var(--text-muted)">Notes for Date</h4>
+                <div class="editor-container">
+                    <div class="word-ribbon">
+                        <button type="button" class="toolbar-btn" onclick="formatCalDoc('bold')"><b>B</b></button>
+                        <button type="button" class="toolbar-btn" onclick="formatCalDoc('italic')"><i>I</i></button>
+                        <button type="button" class="toolbar-btn" onclick="formatCalDoc('underline')"><u>U</u></button>
+                        <button type="button" class="toolbar-btn" onclick="insertCalTable()">Table</button>
+                    </div>
+                    <div id="cal-note-editor" class="rich-editor" contenteditable="true" placeholder="Write a note for selected date..." style="min-height: 100px;"></div>
+                </div>
+                <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+                    <button class="btn-primary" onclick="addCalendarNote()">Add Date Note</button>
+                </div>
+            </div>
+            <div id="calendar-notes-container" class="notes-list"></div>
+        </div>
+        <!-- 4. TIMER TAB -->
+        <div id="view-tools" class="tab-view">
+            <div class="card">
+                <div class="sub-tabs">
+                    <button class="sub-tab active" onclick="switchSubTab('stopwatch', event)">Stopwatch</button>
+                    <button class="sub-tab" onclick="switchSubTab('timer', event)">Timer</button>
+                </div>
+                <div id="sub-stopwatch" class="sub-view active">
+                    <div class="digital-display" id="stopwatch-display">00:00:00</div>
+                    <div class="controls-row">
+                        <button class="btn-primary" id="sw-start-btn" onclick="toggleStopwatch()">Start</button>
+                        <button class="btn-secondary" onclick="resetStopwatch()">Reset</button>
+                    </div>
+                </div>
+                <div id="sub-timer" class="sub-view">
+                    <div class="pomo-mode-badge" id="pomo-mode-text"></div>
+                    <div class="music-indicator" id="music-indicator">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                        <span>Calming Break Music Playing...</span>
+                    </div>
+                    <div class="digital-display" id="timer-display">00:00</div>
+                    <div class="controls-row" style="margin-bottom: 20px;">
+                        <input type="number" id="timer-input-min" placeholder="Min" min="0" style="width:75px; text-align:center;">
+                        <input type="number" id="timer-input-sec" placeholder="Sec" min="0" max="59" style="width:75px; text-align:center;">
+                    </div>
+                    <div class="controls-row">
+                        <button class="btn-primary" id="timer-start-btn" onclick="toggleTimer()">Start</button>
+                        <button class="btn-secondary" onclick="resetTimer()">Reset</button>
+                    </div>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <button class="btn-secondary" onclick="togglePomoMenu()">Pomodoro Options</button>
+                        <div class="pomo-menu" id="pomo-menu">
+                            <button class="pomo-opt-btn" onclick="selectPomodoro(50, 10)">50m Work / 10m Break</button>
+                            <button class="pomo-opt-btn" onclick="selectPomodoro(25, 5)">25m Work / 5m Break</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 5. SIMON SEARCHER TAB -->
+        <div id="view-simon" class="tab-view">
+            <div class="card" style="display:flex; flex-direction:column; height:600px; padding:0; overflow:hidden;">
+                <div style="padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; background:var(--card-bg);">
+                    <img class="simon-avatar-img" src="lemon-hand-drawn-icon-isolated_24640-134475.jpg" alt="Simon">
+                    <div>
+                        <h4 style="font-size:0.95rem; font-weight:600; color:var(--text-main);">Simon Searcher</h4>
+                        <p style="font-size:0.75rem; color:var(--text-muted);">Helpful answers, right here.</p>
+                    </div>
+                </div>
+                <div id="simon-messages" style="flex-grow:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:16px; background:var(--bg-color);">
+                    <div style="display:flex; gap:12px; max-width:88%;">
+                        <img class="simon-avatar-img" style="width:28px;height:28px;" src="lemon-hand-drawn-icon-isolated_24640-134475.jpg" alt="Simon">
+                        <div style="background:var(--card-bg); border:1px solid var(--border); padding:14px 18px; border-radius:14px; font-size:0.9rem; line-height:1.6; color:var(--text-main); box-shadow:var(--shadow);">
+                            Ask me anything.
+                        </div>
+                    </div>
+                </div>
+                <div style="padding:16px; border-top:1px solid var(--border); background:var(--card-bg); display:flex; gap:10px; align-items:center;">
+                    <input type="text" id="simon-input" placeholder="Ask Simon Searcher..." style="flex-grow:1; padding:12px 16px; border-radius:24px; border:1px solid var(--border); background:var(--bg-color); color:var(--text-main); font-size:0.9rem;" onkeydown="if(event.key==='Enter') sendSimonMessage()">
+                    <button class="btn-primary" id="simon-send-btn" style="border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center; padding:0; flex-shrink:0;" onclick="sendSimonMessage()" title="Send" aria-label="Send">
+                        <svg class="icon-svg" style="stroke:white;" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    <script>
+        // --- App Data ---
+        window.notes = JSON.parse(localStorage.getItem('app_notes')) || [];
+        window.tasks = JSON.parse(localStorage.getItem('app_tasks')) || [];
+        window.simonChat = JSON.parse(localStorage.getItem('app_simon_chat')) || [
+            { sender: 'simon', text: "Hello! I'm Simon. How can I help you today?" }
+        ];
+        
+        // --- Profile & Missions Data ---
+        window.profileData = JSON.parse(localStorage.getItem('app_profile')) || {
+            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces',
+            xp: 0,
+            level: 1,
+            pomoCompleted: 0,
+            selectedTitle: '',
+            missions: {
+                notes: { claimed: false },
+                pomo: { claimed: false },
+                tasks: { claimed: false }
+            }
+        };
+        function saveProfile() {
+            localStorage.setItem('app_profile', JSON.stringify(window.profileData));
+            updateProfileUI();
+        }
+        function updateProfileUI() {
+            const avatarImg = document.getElementById('header-avatar-img');
+            const modalAvatarImg = document.getElementById('modal-avatar-img');
+            if (avatarImg) avatarImg.src = window.profileData.avatar;
+            if (modalAvatarImg) modalAvatarImg.src = window.profileData.avatar;
+            
+            let levelText = `Level ${window.profileData.level}`;
+            if (window.profileData.selectedTitle) {
+                levelText += ` • [${window.profileData.selectedTitle}]`;
+            }
+            document.getElementById('profile-level-text').innerText = levelText;
+            
+            const currentLevelXp = window.profileData.xp % 100;
+            document.getElementById('profile-xp-text').innerText = `${currentLevelXp} / 100 XP (Total: ${window.profileData.xp})`;
+            document.getElementById('profile-xp-bar').style.width = `${currentLevelXp}%`;
+            
+            const titleSection = document.getElementById('title-selection-section');
+            if (window.profileData.level >= 50) {
+                if (titleSection) titleSection.style.display = 'block';
+                const titleSelect = document.getElementById('profile-title-select');
+                if (titleSelect) titleSelect.value = window.profileData.selectedTitle || '';
+            } else {
+                if (titleSection) titleSection.style.display = 'none';
+            }
+            renderMissions();
+        }
+        function selectUserTitle(title) {
+            window.profileData.selectedTitle = title;
+            saveProfile();
+        }
+        function openProfileModal() {
+            document.getElementById('profile-modal').classList.add('show');
+            updateProfileUI();
+        }
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.remove('show');
+        }
+        function updateProfileAvatar(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                window.profileData.avatar = evt.target.result;
+                saveProfile();
+            };
+            reader.readAsDataURL(file);
+        }
+        function addXP(amount) {
+            const oldLevel = window.profileData.level;
+            window.profileData.xp += amount;
+            window.profileData.level = Math.floor(window.profileData.xp / 100) + 1;
+            saveProfile();
+            if (window.profileData.level > oldLevel) {
+                if (window.profileData.level === 50) {
+                    alert(`🐐 Legendary! You reached Level 50 and unlocked three titles: The Goat, The Honored One, or The King Of Syncro! Check your profile to select one.`);
+                } else {
+                    alert(`🎉 Level Up! You reached Level ${window.profileData.level}!`);
+                }
+                launchConfetti();
+            }
+        }
+        function renderMissions() {
+            const container = document.getElementById('missions-container');
+            container.innerHTML = '';
+            const noteCount = window.notes.length;
+            const completedTasksCount = window.tasks.filter(t => t.done).length;
+            if (window.profileData.pomoCompleted === undefined) window.profileData.pomoCompleted = 0;
+            const missionsList = [
+                { id: 'notes', title: 'Write 10 notes', current: Math.min(10, noteCount), target: 10, reward: 50 },
+                { id: 'pomo', title: 'Complete 1 Pomodoro session', current: Math.min(1, window.profileData.pomoCompleted), target: 1, reward: 40 },
+                { id: 'tasks', title: 'Complete 3 tasks', current: Math.min(3, completedTasksCount), target: 3, reward: 30 }
+            ];
+            missionsList.forEach(m => {
+                const isCompleted = m.current >= m.target;
+                const missionState = window.profileData.missions[m.id];
+                const isClaimed = missionState ? missionState.claimed : false;
+                const div = document.createElement('div');
+                div.className = 'mission-card';
+                div.innerHTML = `
+                    <div class="mission-info">
+                        <h5>${m.title}</h5>
+                        <p>Progress: ${m.current} / ${m.target} • Reward: ${m.reward} XP</p>
+                    </div>
+                    <div>
+                        ${isClaimed ? '<span style="color: var(--success); font-weight: 600; font-size: 0.8rem;">Claimed ✓</span>' : 
+                          isCompleted ? `<button class="btn-primary" style="padding: 4px 10px; font-size: 0.75rem;" onclick="claimMission('${m.id}', ${m.reward})">Claim</button>` : 
+                          '<span style="color: var(--text-muted); font-size: 0.8rem;">In Progress</span>'}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        function claimMission(id, reward) {
+            if (!window.profileData.missions[id]) window.profileData.missions[id] = {};
+            window.profileData.missions[id].claimed = true;
+            addXP(reward);
+            renderMissions();
+        }
+        let currentDate = new Date();
+        let selectedDateStr = formatDateKey(new Date());
+        function saveData() {
+            localStorage.setItem('app_notes', JSON.stringify(window.notes));
+            localStorage.setItem('app_tasks', JSON.stringify(window.tasks));
+            if (window.cloudSyncTrigger) window.cloudSyncTrigger();
+        }
+        window.saveData = saveData;
+        function formatDateKey(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
+        // --- File Type & Office Ribbon Switching ---
+        function switchFileType(type, evt) {
+            document.querySelectorAll('.file-type-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.file-workspace').forEach(w => w.classList.remove('active'));
+            if (evt) evt.currentTarget.classList.add('active');
+            document.getElementById(`workspace-${type}`).classList.add('active');
+        }
+        function switchPptTab(tabName) {
+            document.querySelectorAll('#workspace-ppt .office-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#workspace-ppt .office-ribbon-content').forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            const target = document.getElementById(`ppt-tab-${tabName}`);
+            if (target) target.classList.add('active');
+        }
+        function switchExcelTab(tabName) {
+            document.querySelectorAll('#workspace-excel .office-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#workspace-excel .office-ribbon-content').forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            const target = document.getElementById(`excel-tab-${tabName}`);
+            if (target) target.classList.add('active');
+        }
+        // --- FULLSCREEN TOGGLE FUNCTIONALITY FOR ALL EDITORS ---
+        function toggleEditorFullscreen(containerId, btnId) {
+            const container = document.getElementById(containerId);
+            const btn = document.getElementById(btnId);
+            const isFullscreen = container.classList.toggle('fullscreen-editor');
+            if (isFullscreen) {
+                btn.classList.add('active-mode');
+                if (btn.querySelector('span')) {
+                    btn.querySelector('span').innerText = 'Exit Fullscreen';
+                } else {
+                    btn.innerText = 'Exit Fullscreen';
+                }
+            } else {
+                btn.classList.remove('active-mode');
+                if (btn.querySelector('span')) {
+                    btn.querySelector('span').innerText = 'Fullscreen';
+                } else {
+                    btn.innerText = 'Fullscreen';
+                }
+            }
+        }
+        function formatDoc(cmd, val = null) {
+            document.getElementById('note-editor').focus();
+            document.execCommand(cmd, false, val);
+        }
+        function formatPpt(cmd, val = null) {
+            document.getElementById('ppt-editor').focus();
+            document.execCommand(cmd, false, val);
+        }
+        function formatExcel(cmd, val = null) {}
+        function insertTable() {
+            const editor = document.getElementById('note-editor');
+            editor.focus();
+            let tableHtml = '<table><thead><tr><th>Header 1</th><th>Header 2</th></tr></thead><tbody><tr><td>Data 1</td><td>Data 2</td></tr></tbody></table><p><br></p>';
+            document.execCommand('insertHTML', false, tableHtml);
+        }
+        function insertPptTable() {
+            const editor = document.getElementById('ppt-editor');
+            editor.focus();
+            let tableHtml = '<table><thead><tr><th>Slide Title</th><th>Content</th></tr></thead><tbody><tr><td>Point 1</td><td>Details</td></tr></tbody></table><p><br></p>';
+            document.execCommand('insertHTML', false, tableHtml);
+        }
+        function insertExcelTable() {
+            alert('Table formatted on spreadsheet.');
+        }
+        function triggerImageUpload() { document.getElementById('note-image-input').click(); }
+        function insertUploadedImage(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const editor = document.getElementById('note-editor');
+                editor.focus();
+                document.execCommand('insertHTML', false, `<img src="${evt.target.result}" alt="Image"><p><br></p>`);
+            };
+            reader.readAsDataURL(file);
+            e.target.value = '';
+        }
+        function triggerPptImage() { document.getElementById('ppt-img-input').click(); }
+        function insertPptImageFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const editor = document.getElementById('ppt-editor');
+                editor.focus();
+                document.execCommand('insertHTML', false, `<img src="${evt.target.result}" alt="Slide Image"><p><br></p>`);
+            };
+            reader.readAsDataURL(file);
+            e.target.value = '';
+        }
+        function triggerExcelImage() { document.getElementById('excel-img-input').click(); }
+        function insertExcelImageFile(e) { alert('Image added to spreadsheet workbook.'); }
+        function insertPptSlide() {
+            const editor = document.getElementById('ppt-editor');
+            editor.focus();
+            document.execCommand('insertHTML', false, '<hr><h3>New Slide</h3><p>Add slide content here...</p>');
+        }
+        function autoSumExcel() {
+            alert('AutoSum calculated for selected cell range.');
+        }
+        // --- File Downloads (Word, PowerPoint, Excel) ---
+        function downloadSingleNote(id) {
+            const note = window.notes.find(n => n.id === id);
+            if (!note) return;
+            let htmlContent = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'><title>Syncro Document</title></head>
+                <body><div>${note.text}</div></body></html>
+            `;
+            const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Document_${note.id}.doc`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        function downloadNotesAsWord() {
+            const editor = document.getElementById('note-editor');
+            const content = editor.innerHTML.trim() || '<p>Empty Word Document</p>';
+            let htmlContent = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'><title>Word Document</title></head>
+                <body><h1>Syncro Word Document</h1>${content}</body></html>
+            `;
+            const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Syncro_Document_${formatDateKey(new Date())}.doc`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        function downloadPowerPoint() {
+            const editor = document.getElementById('ppt-editor');
+            const content = editor.innerHTML.trim() || '<p>Presentation Slide 1</p>';
+            const transition = document.getElementById('ppt-transition-select').value;
+            const animation = document.getElementById('ppt-animation-select').value;
+            let htmlContent = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:p='urn:schemas-microsoft-com:office:powerpoint' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'><title>Presentation</title>
+                <style>body { font-family: Calibri, sans-serif; padding: 40px; background: #fff; }</style>
+                </head>
+                <body>
+                    <h2>Syncro PowerPoint Presentation</h2>
+                    <p><b>Applied Transition:</b> ${transition} | <b>Applied Animation:</b> ${animation}</p>
+                    <hr/>
+                    <div class="slide">${content}</div>
+                </body></html>
+            `;
+            const blob = new Blob(['\ufeff', htmlContent], { type: 'application/vnd.ms-powerpoint' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Presentation_${formatDateKey(new Date())}.ppt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        function downloadExcel() {
+            const table = document.getElementById('excel-spreadsheet').outerHTML;
+            let htmlContent = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'><title>Spreadsheet</title></head>
+                <body><h3>Syncro Microsoft Excel Workbook</h3>${table}</body></html>
+            `;
+            const blob = new Blob(['\ufeff', htmlContent], { type: 'application/vnd.ms-excel' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Workbook_${formatDateKey(new Date())}.xls`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        function openAuthModal() { document.getElementById('auth-modal').classList.add('show'); }
+        function closeAuthModal() { document.getElementById('auth-modal').classList.remove('show'); }
+
+        // --- Local Account System (no Firebase/API required) ---
+        let currentUser = null;
+        let isSignUpMode = false;
+
+        async function hashPassword(password) {
+            const data = new TextEncoder().encode(password);
+            const digest = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function getLocalUsers() {
+            try {
+                return JSON.parse(localStorage.getItem('synco_local_users')) || {};
+            } catch (_) {
+                return {};
+            }
+        }
+
+        function saveLocalUsers(users) {
+            localStorage.setItem('synco_local_users', JSON.stringify(users));
+        }
+
+        function getSessionEmail() {
+            return localStorage.getItem('synco_local_session') || '';
+        }
+
+        function updateAuthUI() {
+            const accountBtn = document.getElementById('account-btn');
+            const signedOut = document.getElementById('auth-signed-out-view');
+            const signedIn = document.getElementById('auth-signed-in-view');
+            const emailDisplay = document.getElementById('user-email-display');
+            if (!accountBtn || !signedOut || !signedIn || !emailDisplay) return;
+
+            const sessionEmail = getSessionEmail();
+            currentUser = sessionEmail || null;
+            if (currentUser) {
+                accountBtn.style.color = 'var(--success)';
+                signedOut.style.display = 'none';
+                signedIn.style.display = 'block';
+                emailDisplay.innerText = currentUser;
+            } else {
+                accountBtn.style.color = 'var(--text-main)';
+                signedOut.style.display = 'block';
+                signedIn.style.display = 'none';
+                emailDisplay.innerText = '';
+            }
+        }
+
+        window.handleAuthSubmit = async function() {
+            const email = document.getElementById('auth-email').value.trim().toLowerCase();
+            const password = document.getElementById('auth-password').value;
+            if (!email || !password) {
+                alert('Please fill in both email and password.');
+                return;
+            }
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters.');
+                return;
+            }
+
+            const users = getLocalUsers();
+            const passwordHash = await hashPassword(password);
+
+            if (isSignUpMode) {
+                if (users[email]) {
+                    alert('An account with that email already exists. Please sign in instead.');
+                    return;
+                }
+                users[email] = {
+                    passwordHash,
+                    createdAt: new Date().toISOString()
+                };
+                saveLocalUsers(users);
+                localStorage.setItem('synco_local_session', email);
+                document.getElementById('auth-email').value = '';
+                document.getElementById('auth-password').value = '';
+                updateAuthUI();
+                closeAuthModal();
+                alert('Account created successfully.');
+            } else {
+                if (!users[email]) {
+                    alert('No account found for that email. Switch to Sign Up first.');
+                    return;
+                }
+                if (users[email].passwordHash !== passwordHash) {
+                    alert('Incorrect password.');
+                    return;
+                }
+                localStorage.setItem('synco_local_session', email);
+                document.getElementById('auth-email').value = '';
+                document.getElementById('auth-password').value = '';
+                updateAuthUI();
+                closeAuthModal();
+                alert('Signed in successfully.');
+            }
+        };
+
+        window.handleSignOut = function() {
+            localStorage.removeItem('synco_local_session');
+            currentUser = null;
+            updateAuthUI();
+            closeAuthModal();
+        };
+
+        window.toggleAuthMode = function() {
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('auth-title').innerText = isSignUpMode ? 'Create Account' : 'Account Sign In';
+            document.getElementById('auth-submit-btn').innerText = isSignUpMode ? 'Sign Up' : 'Sign In';
+            document.getElementById('auth-toggle-btn').innerText = isSignUpMode
+                ? 'Already have an account? Sign In'
+                : "Don't have an account? Sign Up";
+        };
+
+        // Local accounts are intentionally device/browser-local; there is no cloud sync.
+        updateAuthUI();
+        function openSearchModal() { document.getElementById('search-modal').classList.add('show'); performGlobalSearch(); }
+        function closeSearchModal() { document.getElementById('search-modal').classList.remove('show'); }
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+        function toggleCompactMode() { document.body.classList.toggle('compact-mode'); }
+        function switchMainTab(tabName, evt) {
+            document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+            if (evt) evt.currentTarget.classList.add('active');
+            document.getElementById(`view-${tabName}`).classList.add('active');
+            if (tabName === 'calendar') renderCalendar();
+            if (tabName === 'notes') renderAllNotes();
+            if (tabName === 'tasks') renderTasks();
+            if (tabName === 'simon') renderSimonChat();
+        }
+        function addNote() {
+            const editor = document.getElementById('note-editor');
+            const htmlContent = editor.innerHTML.trim();
+            if (!htmlContent || htmlContent === '<br>') return;
+            const now = new Date();
+            window.notes.unshift({
+                id: Date.now().toString(),
+                dateKey: formatDateKey(now),
+                dateLabel: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                text: htmlContent,
+                time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+            saveData();
+            editor.innerHTML = '';
+            renderAllNotes();
+            alert("File saved successfully!");
+        }
+        function deleteNote(id) {
+            window.notes = window.notes.filter(n => n.id !== id);
+            saveData();
+            renderAllNotes();
+            renderCalendarNotes();
+            renderCalendar();
+        }
+        function renderAllNotes() {
+            const container = document.getElementById('all-notes-container');
+            container.innerHTML = window.notes.length === 0 ? '<div class="empty-state">No saved documents found.</div>' : '';
+            window.notes.forEach(note => {
+                const div = document.createElement('div');
+                div.className = 'note';
+                div.innerHTML = `
+                    <div class="note-content">
+                        <div>${note.text}</div>
+                        <span class="note-time">${note.dateLabel} • ${note.time}</span>
+                    </div>
+                    <div class="note-actions">
+                        <button class="btn-action" onclick="downloadSingleNote('${note.id}')" title="Download Document">
+                            <svg class="icon-svg" viewBox="0 0 24 24">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                        </button>
+                        <button class="btn-delete" onclick="deleteNote('${note.id}')" title="Delete">&times;</button>
+                    </div>`;
+                container.appendChild(div);
+            });
+        }
+        function addTask() {
+            const input = document.getElementById('task-input');
+            if (!input.value.trim()) return;
+            window.tasks.unshift({ id: Date.now().toString(), text: input.value.trim(), done: false });
+            saveData();
+            input.value = '';
+            renderTasks();
+        }
+        function toggleTask(id) {
+            const task = window.tasks.find(t => t.id === id);
+            if (task) task.done = !task.done;
+            saveData();
+            renderTasks();
+        }
+        function deleteTask(id) {
+            window.tasks = window.tasks.filter(t => t.id !== id);
+            saveData();
+            renderTasks();
+        }
+        function renderTasks() {
+            const container = document.getElementById('tasks-container');
+            container.innerHTML = window.tasks.length === 0 ? '<div class="empty-state">No tasks yet.</div>' : '';
+            const completed = window.tasks.filter(t => t.done).length;
+            const pct = window.tasks.length === 0 ? 0 : Math.round((completed / window.tasks.length) * 100);
+            document.getElementById('task-progress-text').innerText = `${pct}% Completed`;
+            document.getElementById('task-progress-fill').style.width = `${pct}%`;
+            window.tasks.forEach(task => {
+                const item = document.createElement('div');
+                item.className = `task-item ${task.done ? 'completed' : ''}`;
+                item.innerHTML = `<input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTask('${task.id}')">
+                    <span style="flex-grow: 1;">${task.text}</span>
+                    <button class="btn-delete" onclick="deleteTask('${task.id}')">&times;</button>`;
+                container.appendChild(item);
+            });
+            if (window.tasks.length > 0 && completed === window.tasks.length) {
+                triggerCelebration();
+            }
+        }
+        function triggerCelebration() {
+            document.getElementById('task-modal').classList.add('show');
+            launchConfetti();
+        }
+        function closeCelebrationModal() {
+            document.getElementById('task-modal').classList.remove('show');
+        }
+        function launchConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const particles = Array.from({ length: 80 }).map(() => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                r: Math.random() * 6 + 2,
+                d: Math.random() * 10,
+                color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+                tilt: Math.floor(Math.random() * 10) - 10
+            }));
+            let ticks = 0;
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    ctx.beginPath();
+                    ctx.lineWidth = p.r;
+                    ctx.strokeStyle = p.color;
+                    ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+                    ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+                    ctx.stroke();
+                    p.y += Math.cos(p.d) + 1 + p.r / 2;
+                    p.tilt = Math.sin(ticks / 10) * 15;
+                    if (p.y > canvas.height) {
+                        p.y = -10;
+                        p.x = Math.random() * canvas.width;
+                    }
+                });
+                ticks++;
+                if (ticks < 150) {
+                    requestAnimationFrame(draw);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            draw();
+        }
+        function renderCalendar() {
+            const grid = document.getElementById('cal-grid');
+            const monthYearText = document.getElementById('cal-month-year');
+            grid.innerHTML = '';
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            monthYearText.innerText = `${monthNames[month]} ${year}`;
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            dayNames.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'cal-day-name';
+                dayHeader.innerText = day;
+                grid.appendChild(dayHeader);
+            });
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const todayStr = formatDateKey(new Date());
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'cal-date empty';
+                grid.appendChild(emptyCell);
+            }
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateObj = new Date(year, month, day);
+                const dateKey = formatDateKey(dateObj);
+                const cell = document.createElement('div');
+                cell.className = 'cal-date';
+                cell.innerText = day;
+                if (dateKey === todayStr) cell.classList.add('today');
+                if (dateKey === selectedDateStr) cell.classList.add('selected');
+                const hasNotes = window.notes.some(n => n.dateKey === dateKey);
+                if (hasNotes) cell.classList.add('has-notes');
+                cell.onclick = () => {
+                    selectedDateStr = dateKey;
+                    renderCalendar();
+                    renderCalendarNotes();
+                };
+                grid.appendChild(cell);
+            }
+            renderCalendarNotes();
+        }
+        function changeMonth(delta) {
+            currentDate.setMonth(currentDate.getMonth() + delta);
+            renderCalendar();
+        }
+        function addCalendarNote() {
+            const editor = document.getElementById('cal-note-editor');
+            const htmlContent = editor.innerHTML.trim();
+            if (!htmlContent || htmlContent === '<br>') return;
+            const [y, m, d] = selectedDateStr.split('-').map(Number);
+            const noteDate = new Date(y, m - 1, d);
+            window.notes.unshift({
+                id: Date.now().toString(),
+                dateKey: selectedDateStr,
+                dateLabel: noteDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                text: htmlContent,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+            saveData();
+            editor.innerHTML = '';
+            renderCalendarNotes();
+            renderCalendar();
+            renderAllNotes();
+        }
+        function renderCalendarNotes() {
+            const container = document.getElementById('calendar-notes-container');
+            const title = document.getElementById('selected-date-title');
+            title.innerText = `Notes for ${selectedDateStr}`;
+            const filteredNotes = window.notes.filter(n => n.dateKey === selectedDateStr);
+            container.innerHTML = filteredNotes.length === 0 ? '<div class="empty-state">No notes for this date.</div>' : '';
+            filteredNotes.forEach(note => {
+                const div = document.createElement('div');
+                div.className = 'note';
+                div.innerHTML = `
+                    <div class="note-content">
+                        <div>${note.text}</div>
+                        <span class="note-time">${note.time}</span>
+                    </div>
+                    <div class="note-actions">
+                        <button class="btn-action" onclick="downloadSingleNote('${note.id}')" title="Download Document">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        </button>
+                        <button class="btn-delete" onclick="deleteNote('${note.id}')" title="Delete">&times;</button>
+                    </div>`;
+                container.appendChild(div);
+            });
+        }
+        let swInterval = null;
+        let swSeconds = 0;
+        function toggleStopwatch() {
+            const btn = document.getElementById('sw-start-btn');
+            if (swInterval) {
+                clearInterval(swInterval);
+                swInterval = null;
+                btn.innerText = 'Start';
+            } else {
+                btn.innerText = 'Pause';
+                swInterval = setInterval(() => {
+                    swSeconds++;
+                    updateStopwatchDisplay();
+                }, 1000);
+            }
+        }
+        function resetStopwatch() {
+            if (swInterval) {
+                clearInterval(swInterval);
+                swInterval = null;
+            }
+            swSeconds = 0;
+            document.getElementById('sw-start-btn').innerText = 'Start';
+            updateStopwatchDisplay();
+        }
+        function updateStopwatchDisplay() {
+            const hrs = String(Math.floor(swSeconds / 3600)).padStart(2, '0');
+            const mins = String(Math.floor((swSeconds % 3600) / 60)).padStart(2, '0');
+            const secs = String(swSeconds % 60).padStart(2, '0');
+            document.getElementById('stopwatch-display').innerText = `${hrs}:${mins}:${secs}`;
+        }
+        let timerInterval = null;
+        let timerTimeLeft = 0;
+        let isPomoActive = false;
+        let isBreakState = false;
+        let pomoWorkMins = 25;
+        let pomoBreakMins = 5;
+        function switchSubTab(tabName, evt) {
+            document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.sub-view').forEach(v => v.classList.remove('active'));
+            if (evt) evt.currentTarget.classList.add('active');
+            document.getElementById(`sub-${tabName}`).classList.add('active');
+        }
+        function playCalmMusic() {
+            const audio = document.getElementById('break-audio');
+            const indicator = document.getElementById('music-indicator');
+            if (audio) audio.play().catch(e => {});
+            if (indicator) indicator.classList.add('show');
+        }
+        function stopCalmMusic() {
+            const audio = document.getElementById('break-audio');
+            const indicator = document.getElementById('music-indicator');
+            if (audio) { audio.pause(); audio.currentTime = 0; }
+            if (indicator) indicator.classList.remove('show');
+        }
+        function toggleTimer() {
+            const btn = document.getElementById('timer-start-btn');
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                btn.innerText = 'Start';
+                if (isBreakState) stopCalmMusic();
+            } else {
+                if (timerTimeLeft <= 0) {
+                    const mins = parseInt(document.getElementById('timer-input-min').value) || 0;
+                    const secs = parseInt(document.getElementById('timer-input-sec').value) || 0;
+                    timerTimeLeft = (mins * 60) + secs;
+                }
+                if (timerTimeLeft <= 0) return;
+                btn.innerText = 'Pause';
+                if (isBreakState) playCalmMusic();
+                timerInterval = setInterval(() => {
+                    timerTimeLeft--;
+                    updateTimerDisplay();
+                    if (timerTimeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        btn.innerText = 'Start';
+                        if (isPomoActive) {
+                            if (!isBreakState) {
+                                isBreakState = true;
+                                timerTimeLeft = pomoBreakMins * 60;
+                                updateTimerDisplay();
+                                document.getElementById('pomo-mode-text').innerText = `Break Time (${pomoBreakMins}m)`;
+                                playCalmMusic();
+                                window.profileData.pomoCompleted = (window.profileData.pomoCompleted || 0) + 1;
+                                saveProfile();
+                                alert("Great work! Time for your break. Calming music is playing...");
+                                toggleTimer();
+                            } else {
+                                stopCalmMusic();
+                                isBreakState = false;
+                                isPomoActive = false;
+                                document.getElementById('pomo-mode-text').innerText = "Break Finished!";
+                                alert("Break time is over! Ready to lock back in?");
+                            }
+                        } else {
+                            alert('Timer finished!');
+                        }
+                    }
+                }, 1000);
+            }
+        }
+        function resetTimer() {
+            if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+            stopCalmMusic();
+            timerTimeLeft = 0;
+            isPomoActive = false;
+            isBreakState = false;
+            document.getElementById('timer-start-btn').innerText = 'Start';
+            document.getElementById('pomo-mode-text').innerText = '';
+            document.getElementById('timer-input-min').value = '';
+            document.getElementById('timer-input-sec').value = '';
+            updateTimerDisplay();
+        }
+        function updateTimerDisplay() {
+            const mins = String(Math.floor(timerTimeLeft / 60)).padStart(2, '0');
+            const secs = String(timerTimeLeft % 60).padStart(2, '0');
+            document.getElementById('timer-display').innerText = `${mins}:${secs}`;
+        }
+        function togglePomoMenu() {
+            document.getElementById('pomo-menu').classList.toggle('show');
+        }
+        function selectPomodoro(workMins, breakMins) {
+            resetTimer();
+            pomoWorkMins = workMins;
+            pomoBreakMins = breakMins;
+            isPomoActive = true;
+            isBreakState = false;
+            document.getElementById('pomo-mode-text').innerText = `Pomodoro: Focus (${workMins}m)`;
+            document.getElementById('timer-input-min').value = workMins;
+            document.getElementById('timer-input-sec').value = 0;
+            timerTimeLeft = workMins * 60;
+            updateTimerDisplay();
+            togglePomoMenu();
+        }
+        // --- Simon Searcher ---
+        function renderSimonChat() {
+            const container = document.getElementById('simon-messages');
+            if (!container) return;
+            container.innerHTML = '';
+            window.simonChat.forEach(msg => {
+                const isUser = msg.sender === 'user';
+                const row = document.createElement('div');
+                row.style.cssText = `display:flex; gap:12px; max-width:90%; ${isUser ? 'margin-left:auto; flex-direction:row-reverse;' : ''}`;
+                const avatar = document.createElement('div');
+                avatar.style.cssText = `width:28px; height:28px; border-radius:50%; background:${isUser ? 'var(--text-muted)' : 'linear-gradient(135deg,#4f46e5,#ec4899)'}; display:flex; align-items:center; justify-content:center; color:white; font-weight:600; flex-shrink:0;`;
+                avatar.innerText = isUser ? 'U' : '🔎';
+                const bubble = document.createElement('div');
+                bubble.style.cssText = `background:${isUser ? 'var(--primary)' : 'var(--card-bg)'}; color:${isUser ? 'white' : 'var(--text-main)'}; border:1px solid var(--border); padding:14px 18px; border-radius:14px; font-size:0.9rem; line-height:1.6; word-break:break-word; box-shadow:var(--shadow); width:fit-content; max-width:min(760px,calc(100vw - 100px));`;
+                bubble.innerHTML = msg.text;
+                row.appendChild(avatar); row.appendChild(bubble); container.appendChild(row);
+            });
+            container.scrollTop = container.scrollHeight;
+        }
+        function askSimonSuggestion(text) {
+            const input = document.getElementById('simon-input');
+            if (!input) return;
+            input.value = text;
+            sendSimonMessage();
+        }
+        function googleSearchUrl(query) {
+            return 'https://www.google.com/search?q=' + encodeURIComponent(query);
+        }
+        function buildSearchCard(query) {
+            const url = googleSearchUrl(query);
+            return `
+                <strong>${escapeHtml(query)}</strong><br>
+                <div style="margin-top:10px; padding:12px; border:1px solid var(--border); border-radius:10px; background:var(--bg-color);">
+                    <div style="font-weight:600; margin-bottom:6px;">Results are ready</div>
+                    <div style="color:var(--text-muted); margin-bottom:10px;">Open the results page to view the latest information.</div>
+                    <a href="${url}" target="_blank" rel="noopener noreferrer" style="display:inline-block; padding:8px 12px; border-radius:8px; background:var(--primary); color:white; text-decoration:none;">View results</a>
+                </div>`;
+        }
+        function escapeHtml(value) {
+            return String(value).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+        }
+        function sendSimonMessage() {
+            const input = document.getElementById('simon-input');
+            const button = document.getElementById('simon-send-btn');
+            if (!input || !button) return;
+            const query = input.value.trim();
+            if (!query) return;
+            window.simonChat.push({ sender:'user', text:escapeHtml(query) });
+            input.value = '';
+            renderSimonChat();
+            button.disabled = true;
+            button.style.opacity = '0.6';
+            const container = document.getElementById('simon-messages');
+            const typingId = 'typing-' + Date.now();
+            const typingRow = document.createElement('div');
+            typingRow.id = typingId;
+            typingRow.style.cssText = 'display:flex; gap:12px; max-width:90%;';
+            typingRow.innerHTML = `<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#ec4899);display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0;">🔎</div><div style="background:var(--card-bg);border:1px solid var(--border);padding:12px 18px;border-radius:14px;font-size:0.9rem;color:var(--text-muted);">One moment...</div>`;
+            container.appendChild(typingRow);
+            container.scrollTop = container.scrollHeight;
+            setTimeout(() => {
+                const typingElem = document.getElementById(typingId);
+                if (typingElem) typingElem.remove();
+                window.simonChat.push({ sender:'simon', text:buildSearchCard(query) });
+                localStorage.setItem('app_simon_chat', JSON.stringify(window.simonChat));
+                renderSimonChat();
+                button.disabled = false;
+                button.style.opacity = '1';
+            }, 350);
+        }
+        function performGlobalSearch() {
+            const query = document.getElementById('global-search-input').value.toLowerCase().trim();
+            const container = document.getElementById('global-search-results');
+            if (!query) {
+                container.innerHTML = '<div class="empty-state">Type something to search...</div>';
+                return;
+            }
+            const matchedNotes = window.notes.filter(n => n.text.toLowerCase().includes(query));
+            const matchedTasks = window.tasks.filter(t => t.text.toLowerCase().includes(query));
+            let html = '';
+            if (matchedNotes.length > 0) {
+                html += '<h4 style="margin: 10px 0 6px 0; color: var(--primary);">Documents & Notes</h4>';
+                matchedNotes.forEach(n => {
+                    html += `
+                        <div class="note" style="margin-bottom:8px;">
+                            <div class="note-content">
+                                <div>${n.text}</div>
+                                <span class="note-time">${n.dateLabel} • ${n.time}</span>
+                            </div>
+                        </div>`;
+                });
+            }
+            if (matchedTasks.length > 0) {
+                html += '<h4 style="margin: 14px 0 6px 0; color: var(--primary);">Tasks</h4>';
+                matchedTasks.forEach(t => {
+                    html += `<div class="task-item" style="margin-bottom:6px;"><span style="flex-grow:1;">${t.text}</span></div>`;
+                });
+            }
+            container.innerHTML = html || '<div class="empty-state">No matching results found.</div>';
+        }
+    </script>
+</body>
+</html>
+
+```
