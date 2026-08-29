@@ -1,10 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Syncro</title>
-    <link rel="icon" type="image/png" href="SYNCRO.png">
     <!-- Imported Google Fonts for Rich Text Editor -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@400;700&family=Cinzel:wght@400;700&family=Comfortaa:wght@400;700&family=Dancing+Script:wght@400;700&family=Fira+Code&family=Fira+Sans&family=Great+Vibes&family=Inconsolata&family=Inter:wght@400;600;700&family=Kanit&family=Lato&family=Lobster&family=Lora:ital,wght@0,400;0,700;1,400&family=Merriweather&family=Montserrat:wght@400;600;700&family=Noto+Sans&family=Nunito&family=Open+Sans:wght@400;600&family=Oswald&family=Pacifico&family=Permanent+Marker&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@400;600;700&family=Press+Start+2P&family=PT+Sans&family=PT+Serif&family=Quicksand&family=Raleway&family=Roboto:wght@400;500;700&family=Rubik&family=Shadows+Into+Light&family=Space+Mono&family=Work+Sans&display=swap');
@@ -121,13 +121,7 @@
             display: inline-block;
             vertical-align: middle;
         }
-
-        /* Syncro branding */
-        .brand-lockup { display:flex; align-items:center; gap:10px; min-width:0; }
-        .brand-lockup img { width:42px; height:42px; object-fit:cover; border-radius:10px; flex-shrink:0; }
-        .brand-lockup h2 { font-size:1.25rem; font-weight:800; letter-spacing:-0.02em; }
         .simon-avatar-img { width:32px; height:32px; border-radius:50%; object-fit:cover; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.12); }
-
         /* Navigation Tabs */
         .nav-tabs {
             display: flex;
@@ -546,6 +540,20 @@
             font-weight: 500; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
         }
         .pomo-opt-btn:hover { background-color: var(--primary-light); color: var(--primary); border-color: transparent; }
+
+        /* Flashcards */
+        .flashcard-form { display:grid; gap:12px; }
+        .flashcard-form textarea { width:100%; min-height:90px; resize:vertical; background:var(--card-bg); color:var(--text-main); border:1px solid var(--border); border-radius:8px; padding:10px; font:inherit; outline:none; }
+        .flashcard-form textarea:focus { border-color:var(--primary); }
+        .flashcard-list { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+        .flashcard-item { border:1px solid var(--border); border-radius:10px; padding:12px; background:var(--bg-color); }
+        .flashcard-item strong { color:var(--primary); }
+        .flashcard-actions { display:flex; gap:8px; margin-top:8px; }
+        .deck-toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:0 0 16px; }
+        .deck-toolbar select { flex:1; min-width:180px; }
+        .study-card { min-height:240px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; border:2px solid var(--primary); border-radius:16px; padding:28px; background:var(--card-bg); cursor:pointer; user-select:none; }
+        .study-card .label { font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); margin-bottom:12px; }
+        .study-card .content { font-size:1.15rem; line-height:1.6; white-space:pre-wrap; word-break:break-word; }
         /* Modals */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -645,29 +653,29 @@
             </div>
         </div>
     </div>
-    <!-- Global Search Modal -->
+    <!-- Global Workspace Search -->
     <div class="modal-overlay" id="search-modal">
         <div class="modal-card" style="max-width: 600px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
                 <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
                     <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    Search Syncro
+                    Find in Syncro
                 </h3>
                 <button class="btn-delete" style="font-size: 1.5rem;" onclick="closeSearchModal()">&times;</button>
             </div>
-            <input type="text" id="global-search-input" placeholder="Type to search notes, calendar & tasks..." oninput="performGlobalSearch()" autofocus style="width:100%;">
+            <input type="text" id="global-search-input" placeholder="Find notes, calendar & tasks..." oninput="performGlobalSearch()" autofocus style="width:100%;">
             <div id="global-search-results" style="margin-top: 16px; max-height: 50vh; overflow-y: auto;"></div>
         </div>
     </div>
     <div class="app-container">
         <!-- App Header -->
         <div class="app-header">
-            <div class="brand-lockup"><img src="SYNCRO.png" alt="Syncro logo"><h2>Syncro</h2></div>
+            <h2 style="font-size: 1.3rem;">Syncro</h2>
             <div class="header-actions">
                 <button class="header-btn" onclick="openProfileModal()" title="Profile & Missions" style="padding: 4px; border-radius: 50%;">
                     <img id="header-avatar-img" src="" alt="Profile" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
                 </button>
-                <button class="header-btn" onclick="openSearchModal()" title="Search All">
+                <button class="header-btn" onclick="openSearchModal()" title="Find in Syncro">
                     <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </button>
                 <button class="header-btn" onclick="toggleCompactMode()" title="Toggle Compact Mode">
@@ -704,7 +712,8 @@
             <button class="nav-tab" onclick="switchMainTab('tasks', event)">Tasks</button>
             <button class="nav-tab" onclick="switchMainTab('calendar', event)">Calendar</button>
             <button class="nav-tab" onclick="switchMainTab('tools', event)">Timer</button>
-            <button class="nav-tab" onclick="switchMainTab('simon', event)">Simon Searcher</button>
+            <button class="nav-tab" onclick="switchMainTab('simon', event)">Simon AI</button>
+            <button class="nav-tab" onclick="switchMainTab('flashcards', event)">🧠 Flashcards</button>
         </div>
         <!-- 1. FILES & NOTES TAB WITH WORD, POWERPOINT, AND EXCEL EDITORS -->
         <div id="view-notes" class="tab-view active">
@@ -915,20 +924,47 @@
                             <table class="excel-table" id="excel-spreadsheet">
                                 <thead>
                                     <tr>
-                                        <th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
+                                        <th></th>
+                                        <th>A</th>
+                                        <th>B</th>
+                                        <th>C</th>
+                                        <th>D</th>
+                                        <th>E</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr><th>1</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-                                    <tr><th>2</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-                                    <tr><th>3</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-                                    <tr><th>4</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-                                    <tr><th>5</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-                                    <tr><th>6</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-                                    <tr><th>7</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-                                    <tr><th>8</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-                                    <tr><th>9</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-                                    <tr><th>10</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                                    <tr>
+                                        <th>1</th>
+                                        <td contenteditable="true">Item</td>
+                                        <td contenteditable="true">Category</td>
+                                        <td contenteditable="true">Quantity</td>
+                                        <td contenteditable="true">Price</td>
+                                        <td contenteditable="true">Total</td>
+                                    </tr>
+                                    <tr>
+                                        <th>2</th>
+                                        <td contenteditable="true">Laptop</td>
+                                        <td contenteditable="true">Electronics</td>
+                                        <td contenteditable="true">5</td>
+                                        <td contenteditable="true">1200</td>
+                                        <td contenteditable="true">=C2*D2</td>
+                                    </tr>
+                                    <tr>
+                                        <th>3</th>
+                                        <td contenteditable="true">Desk</td>
+                                        <td contenteditable="true">Furniture</td>
+                                        <td contenteditable="true">2</td>
+                                        <td contenteditable="true">300</td>
+                                        <td contenteditable="true">=C3*D3</td>
+                                    </tr>
+                                    <tr>
+                                        <th>4</th>
+                                        <td contenteditable="true">Chair</td>
+                                        <td contenteditable="true">Furniture</td>
+                                        <td contenteditable="true">10</td>
+                                        <td contenteditable="true">85</td>
+                                        <td contenteditable="true">=C4*D4</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1027,7 +1063,56 @@
                 </div>
             </div>
         </div>
-        <!-- 5. SIMON SEARCHER TAB -->
+        <!-- 5. FLASHCARDS TAB -->
+        <div id="view-flashcards" class="tab-view">
+            <div class="card">
+                <h3 style="margin-bottom:6px;">Make Flashcards</h3>
+                <p style="color:var(--text-muted); font-size:.85rem; margin-bottom:16px;">Create your own question-and-answer cards. They are saved in this browser.</p>
+                <div class="deck-toolbar">
+                    <label for="flashcard-deck-select" style="font-weight:600;">Deck</label>
+                    <select id="flashcard-deck-select" onchange="selectFlashcardDeck(this.value)" aria-label="Selected flashcard deck"></select>
+                    <button class="btn-secondary" type="button" onclick="createFlashcardDeck()">+ New Deck</button>
+                    <button class="btn-secondary" type="button" onclick="renameFlashcardDeck()">Rename</button>
+                    <button class="btn-delete" type="button" onclick="deleteFlashcardDeck()">Delete</button>
+                </div>
+                <div class="flashcard-form">
+                    <input type="text" id="flashcard-front" placeholder="Question / front of card">
+                    <textarea id="flashcard-back" placeholder="Answer / back of card"></textarea>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="btn-primary" onclick="addFlashcard()">Add Flashcard</button>
+                        <button class="btn-secondary" onclick="makeFlashcardsFromNote()">Use Current Word Note</button>
+                    </div>
+                </div>
+                <div id="flashcard-list" class="flashcard-list"></div>
+                <!-- SYNCRO SMART NOTE Q&A START -->
+                <div class="card" style="margin-top:16px;">
+                    <h3 style="margin-bottom:6px;">✨ Turn a Saved Note into Q&A</h3>
+                    <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:12px;">
+                        Syncro reads a saved note and creates question-and-answer flashcards automatically. No API needed.
+                    </p>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                        <select id="smart-note-select" style="flex:1;min-width:240px;">
+                            <option value="">Choose a saved note...</option>
+                        </select>
+                        <button class="btn-primary" type="button" onclick="smartMakeQAFromSavedNote()">✨ Convert to Q&A</button>
+                    </div>
+                    <div id="smart-qa-preview" style="margin-top:14px;"></div>
+                </div>
+                <!-- SYNCRO SMART NOTE Q&A END -->
+
+            </div>
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:10px;">
+                    <div>
+                        <h3>Study Flashcards</h3>
+                        <p id="flashcard-study-count" style="color:var(--text-muted); font-size:.8rem; margin-top:4px;"></p>
+                    </div>
+                    <button class="btn-secondary" onclick="resetFlashcardStudy()">Restart</button>
+                </div>
+                <div id="flashcard-study-area"></div>
+            </div>
+        </div>
+        <!-- 6. SIMON SEARCHER TAB -->
         <div id="view-simon" class="tab-view">
             <div class="card" style="display:flex; flex-direction:column; height:600px; padding:0; overflow:hidden;">
                 <div style="padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; background:var(--card-bg);">
@@ -1053,6 +1138,107 @@
                 </div>
             </div>
         </div>
+    </div>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        let currentUser = null;
+        let isSignUpMode = false;
+        async function syncToCloud() {
+            if (!currentUser) return;
+            try {
+                await setDoc(doc(db, "users", currentUser.uid), {
+                    notes: window.notes,
+                    tasks: window.tasks
+                });
+            } catch (e) {
+                console.error("Error saving data to cloud:", e);
+            }
+        }
+        async function loadFromCloud() {
+            if (!currentUser) return;
+            try {
+                const docSnap = await getDoc(doc(db, "users", currentUser.uid));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    window.notes = data.notes || [];
+                    window.tasks = data.tasks || [];
+                    window.saveData();
+                    window.renderAllNotes();
+                    window.renderTasks();
+                    window.renderCalendar();
+                }
+            } catch (e) {
+                console.error("Error loading data from cloud:", e);
+            }
+        }
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            const accountBtn = document.getElementById('account-btn');
+            if (user) {
+                accountBtn.style.color = "var(--success)";
+                document.getElementById('auth-signed-out-view').style.display = 'none';
+                document.getElementById('auth-signed-in-view').style.display = 'block';
+                document.getElementById('user-email-display').innerText = user.email;
+                loadFromCloud();
+            } else {
+                accountBtn.style.color = "var(--text-main)";
+                document.getElementById('auth-signed-out-view').style.display = 'block';
+                document.getElementById('auth-signed-in-view').style.display = 'none';
+            }
+        });
+        window.handleAuthSubmit = async () => {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            if (!email || !password) return alert("Please fill in all fields.");
+            try {
+                if (isSignUpMode) {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    await syncToCloud();
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                }
+                window.closeAuthModal();
+            } catch (err) {
+                alert(err.message);
+            }
+        };
+        window.handleSignOut = () => {
+            signOut(auth);
+            window.closeAuthModal();
+        };
+        window.toggleAuthMode = () => {
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('auth-title').innerText = isSignUpMode ? "Create Account" : "Account Sign In";
+            document.getElementById('auth-submit-btn').innerText = isSignUpMode ? "Sign Up" : "Sign In";
+            document.getElementById('auth-toggle-btn').innerText = isSignUpMode ? "Already have an account? Sign In" : "Don't have an account? Sign Up";
+        };
+        window.cloudSyncTrigger = syncToCloud;
+    </script>
     <script>
         // --- App Data ---
         window.notes = JSON.parse(localStorage.getItem('app_notes')) || [];
@@ -1364,122 +1550,6 @@
         }
         function openAuthModal() { document.getElementById('auth-modal').classList.add('show'); }
         function closeAuthModal() { document.getElementById('auth-modal').classList.remove('show'); }
-
-        // --- Local Account System (no Firebase/API required) ---
-        let currentUser = null;
-        let isSignUpMode = false;
-
-        async function hashPassword(password) {
-            const data = new TextEncoder().encode(password);
-            const digest = await crypto.subtle.digest('SHA-256', data);
-            return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        function getLocalUsers() {
-            try {
-                return JSON.parse(localStorage.getItem('synco_local_users')) || {};
-            } catch (_) {
-                return {};
-            }
-        }
-
-        function saveLocalUsers(users) {
-            localStorage.setItem('synco_local_users', JSON.stringify(users));
-        }
-
-        function getSessionEmail() {
-            return localStorage.getItem('synco_local_session') || '';
-        }
-
-        function updateAuthUI() {
-            const accountBtn = document.getElementById('account-btn');
-            const signedOut = document.getElementById('auth-signed-out-view');
-            const signedIn = document.getElementById('auth-signed-in-view');
-            const emailDisplay = document.getElementById('user-email-display');
-            if (!accountBtn || !signedOut || !signedIn || !emailDisplay) return;
-
-            const sessionEmail = getSessionEmail();
-            currentUser = sessionEmail || null;
-            if (currentUser) {
-                accountBtn.style.color = 'var(--success)';
-                signedOut.style.display = 'none';
-                signedIn.style.display = 'block';
-                emailDisplay.innerText = currentUser;
-            } else {
-                accountBtn.style.color = 'var(--text-main)';
-                signedOut.style.display = 'block';
-                signedIn.style.display = 'none';
-                emailDisplay.innerText = '';
-            }
-        }
-
-        window.handleAuthSubmit = async function() {
-            const email = document.getElementById('auth-email').value.trim().toLowerCase();
-            const password = document.getElementById('auth-password').value;
-            if (!email || !password) {
-                alert('Please fill in both email and password.');
-                return;
-            }
-            if (password.length < 6) {
-                alert('Password must be at least 6 characters.');
-                return;
-            }
-
-            const users = getLocalUsers();
-            const passwordHash = await hashPassword(password);
-
-            if (isSignUpMode) {
-                if (users[email]) {
-                    alert('An account with that email already exists. Please sign in instead.');
-                    return;
-                }
-                users[email] = {
-                    passwordHash,
-                    createdAt: new Date().toISOString()
-                };
-                saveLocalUsers(users);
-                localStorage.setItem('synco_local_session', email);
-                document.getElementById('auth-email').value = '';
-                document.getElementById('auth-password').value = '';
-                updateAuthUI();
-                closeAuthModal();
-                alert('Account created successfully.');
-            } else {
-                if (!users[email]) {
-                    alert('No account found for that email. Switch to Sign Up first.');
-                    return;
-                }
-                if (users[email].passwordHash !== passwordHash) {
-                    alert('Incorrect password.');
-                    return;
-                }
-                localStorage.setItem('synco_local_session', email);
-                document.getElementById('auth-email').value = '';
-                document.getElementById('auth-password').value = '';
-                updateAuthUI();
-                closeAuthModal();
-                alert('Signed in successfully.');
-            }
-        };
-
-        window.handleSignOut = function() {
-            localStorage.removeItem('synco_local_session');
-            currentUser = null;
-            updateAuthUI();
-            closeAuthModal();
-        };
-
-        window.toggleAuthMode = function() {
-            isSignUpMode = !isSignUpMode;
-            document.getElementById('auth-title').innerText = isSignUpMode ? 'Create Account' : 'Account Sign In';
-            document.getElementById('auth-submit-btn').innerText = isSignUpMode ? 'Sign Up' : 'Sign In';
-            document.getElementById('auth-toggle-btn').innerText = isSignUpMode
-                ? 'Already have an account? Sign In'
-                : "Don't have an account? Sign Up";
-        };
-
-        // Local accounts are intentionally device/browser-local; there is no cloud sync.
-        updateAuthUI();
         function openSearchModal() { document.getElementById('search-modal').classList.add('show'); performGlobalSearch(); }
         function closeSearchModal() { document.getElementById('search-modal').classList.remove('show'); }
         function toggleTheme() {
@@ -1853,7 +1923,133 @@
             updateTimerDisplay();
             togglePomoMenu();
         }
-        // --- Simon Searcher ---
+
+        // --- Flashcard decks ---
+        window.flashcards = JSON.parse(localStorage.getItem('app_flashcards')) || [];
+        window.flashcardDecks = JSON.parse(localStorage.getItem('app_flashcard_decks')) || [{ id: 'default', name: 'My Flashcards' }];
+        let activeFlashcardDeckId = localStorage.getItem('app_active_flashcard_deck') || window.flashcardDecks[0].id;
+        if (!window.flashcardDecks.some(deck => deck.id === activeFlashcardDeckId)) activeFlashcardDeckId = window.flashcardDecks[0].id;
+        window.flashcards.forEach(card => { if (!card.deckId) card.deckId = 'default'; });
+        let flashcardStudyIndex = 0;
+        let flashcardShowingAnswer = false;
+        function saveFlashcards() {
+            localStorage.setItem('app_flashcards', JSON.stringify(window.flashcards));
+            localStorage.setItem('app_flashcard_decks', JSON.stringify(window.flashcardDecks));
+            localStorage.setItem('app_active_flashcard_deck', activeFlashcardDeckId);
+        }
+        function currentDeckCards() { return window.flashcards.filter(card => card.deckId === activeFlashcardDeckId); }
+        function renderFlashcardDecks() {
+            const select = document.getElementById('flashcard-deck-select');
+            if (!select) return;
+            select.innerHTML = window.flashcardDecks.map(deck => `<option value="${escapeHtml(deck.id)}">${escapeHtml(deck.name)}</option>`).join('');
+            select.value = activeFlashcardDeckId;
+        }
+        function selectFlashcardDeck(deckId) {
+            if (!window.flashcardDecks.some(deck => deck.id === deckId)) return;
+            activeFlashcardDeckId = deckId; flashcardStudyIndex = 0; flashcardShowingAnswer = false;
+            saveFlashcards(); renderFlashcardDecks(); renderFlashcards(); renderFlashcardStudy();
+        }
+        function createFlashcardDeck() {
+            const name = prompt('Name this new deck:');
+            if (name === null) return;
+            const cleanName = name.trim();
+            if (!cleanName) { alert('Deck name cannot be empty.'); return; }
+            const deck = { id: 'deck-' + Date.now().toString() + Math.random().toString(36).slice(2), name: cleanName };
+            window.flashcardDecks.push(deck); selectFlashcardDeck(deck.id);
+        }
+        function renameFlashcardDeck() {
+            const deck = window.flashcardDecks.find(item => item.id === activeFlashcardDeckId);
+            if (!deck) return;
+            const name = prompt('Rename this deck:', deck.name);
+            if (name === null) return;
+            const cleanName = name.trim();
+            if (!cleanName) { alert('Deck name cannot be empty.'); return; }
+            deck.name = cleanName; saveFlashcards(); renderFlashcardDecks();
+        }
+        function deleteFlashcardDeck() {
+            if (window.flashcardDecks.length === 1) { alert('Keep at least one deck.'); return; }
+            const deck = window.flashcardDecks.find(item => item.id === activeFlashcardDeckId);
+            if (!deck || !confirm(`Delete “${deck.name}” and its cards?`)) return;
+            window.flashcards = window.flashcards.filter(card => card.deckId !== activeFlashcardDeckId);
+            window.flashcardDecks = window.flashcardDecks.filter(item => item.id !== activeFlashcardDeckId);
+            selectFlashcardDeck(window.flashcardDecks[0].id);
+        }
+        function addFlashcard(front, back) {
+            const frontInput = document.getElementById('flashcard-front');
+            const backInput = document.getElementById('flashcard-back');
+            const question = (front || frontInput.value).trim();
+            const answer = (back || backInput.value).trim();
+            if (!question || !answer) { alert('Please enter both a question and an answer.'); return; }
+            window.flashcards.push({ id: Date.now().toString() + Math.random().toString(36).slice(2), deckId: activeFlashcardDeckId, front: question, back: answer });
+            saveFlashcards();
+            if (!front) { frontInput.value=''; backInput.value=''; }
+            renderFlashcards();
+            renderFlashcardStudy();
+        }
+        function deleteFlashcard(id) {
+            window.flashcards = window.flashcards.filter(c => c.id !== id);
+            const cards = currentDeckCards();
+            if (flashcardStudyIndex >= cards.length) flashcardStudyIndex = Math.max(0, cards.length - 1);
+            flashcardShowingAnswer = false;
+            saveFlashcards();
+            renderFlashcards();
+            renderFlashcardStudy();
+        }
+        function renderFlashcards() {
+            const list = document.getElementById('flashcard-list');
+            if (!list) return;
+            const cards = currentDeckCards();
+            if (!cards.length) { list.innerHTML='<div class="empty-state">No flashcards in this deck yet. Add your first one above.</div>'; return; }
+            list.innerHTML = cards.map((c,i) => `
+                <div class="flashcard-item">
+                    <div><strong>${i+1}. Q:</strong> ${escapeHtml(c.front)}</div>
+                    <div style="margin-top:5px;"><strong>A:</strong> ${escapeHtml(c.back)}</div>
+                    <div class="flashcard-actions"><button class="btn-delete" onclick="deleteFlashcard('${c.id}')" title="Delete">&times; Delete</button></div>
+                </div>`).join('');
+        }
+        function renderFlashcardStudy() {
+            const area = document.getElementById('flashcard-study-area');
+            const count = document.getElementById('flashcard-study-count');
+            if (!area) return;
+            const cards = currentDeckCards();
+            if (!cards.length) {
+                if (count) count.textContent='0 cards';
+                area.innerHTML='<div class="empty-state">Create a flashcard above to start studying.</div>';
+                return;
+            }
+            const card = cards[flashcardStudyIndex];
+            if (count) count.textContent = `Card ${flashcardStudyIndex+1} of ${cards.length}`;
+            const label = flashcardShowingAnswer ? 'Answer' : 'Question';
+            const content = flashcardShowingAnswer ? card.back : card.front;
+            area.innerHTML = `
+                <div class="study-card" onclick="flipFlashcard()" title="Click to flip">
+                    <div class="label">${label} · click to ${flashcardShowingAnswer ? 'see question' : 'reveal answer'}</div>
+                    <div class="content">${escapeHtml(content)}</div>
+                </div>
+                <div class="controls-row" style="margin-top:14px; margin-bottom:0;">
+                    <button class="btn-secondary" onclick="previousFlashcard()">← Previous</button>
+                    <button class="btn-primary" onclick="flipFlashcard()">${flashcardShowingAnswer ? 'Show Question' : 'Show Answer'}</button>
+                    <button class="btn-secondary" onclick="nextFlashcard()">Next →</button>
+                </div>`;
+        }
+        function flipFlashcard() { flashcardShowingAnswer = !flashcardShowingAnswer; renderFlashcardStudy(); }
+        function nextFlashcard() { const cards=currentDeckCards(); if (!cards.length) return; flashcardStudyIndex = (flashcardStudyIndex + 1) % cards.length; flashcardShowingAnswer=false; renderFlashcardStudy(); }
+        function previousFlashcard() { const cards=currentDeckCards(); if (!cards.length) return; flashcardStudyIndex = (flashcardStudyIndex - 1 + cards.length) % cards.length; flashcardShowingAnswer=false; renderFlashcardStudy(); }
+        function resetFlashcardStudy() { flashcardStudyIndex=0; flashcardShowingAnswer=false; renderFlashcardStudy(); }
+        function makeFlashcardsFromNote() {
+            const editor = document.getElementById('note-editor');
+            if (!editor || !editor.innerText.trim()) { alert('Write some notes in the Word editor first.'); return; }
+            const lines = editor.innerText.split(/\n+/).map(x => x.trim()).filter(Boolean);
+            let added=0;
+            for (let i=0;i<lines.length-1;i+=2) {
+                const q=lines[i].replace(/^(Q|Question)\s*[:\-]\s*/i,'').trim();
+                const a=lines[i+1].replace(/^(A|Answer)\s*[:\-]\s*/i,'').trim();
+                if (q && a) { window.flashcards.push({id:Date.now().toString()+Math.random().toString(36).slice(2),deckId:activeFlashcardDeckId,front:q,back:a}); added++; }
+            }
+            if (!added) { alert('Format your note as alternating lines: question, answer, question, answer.'); return; }
+            saveFlashcards(); renderFlashcards(); renderFlashcardStudy(); alert(`${added} flashcard${added===1?'':'s'} created!`);
+        }
+        // --- Simon Searcher (ported from the supplied local-accounts build) ---
         function renderSimonChat() {
             const container = document.getElementById('simon-messages');
             if (!container) return;
@@ -1868,7 +2064,10 @@
                 const bubble = document.createElement('div');
                 bubble.style.cssText = `background:${isUser ? 'var(--primary)' : 'var(--card-bg)'}; color:${isUser ? 'white' : 'var(--text-main)'}; border:1px solid var(--border); padding:14px 18px; border-radius:14px; font-size:0.9rem; line-height:1.6; word-break:break-word; box-shadow:var(--shadow); width:fit-content; max-width:min(760px,calc(100vw - 100px));`;
                 bubble.innerHTML = msg.text;
-                row.appendChild(avatar); row.appendChild(bubble); container.appendChild(row);
+                
+                row.appendChild(avatar);
+                row.appendChild(bubble);
+                container.appendChild(row);
             });
             container.scrollTop = container.scrollHeight;
         }
@@ -1883,16 +2082,7 @@
         }
         function buildSearchCard(query) {
             const url = googleSearchUrl(query);
-            return `
-                <strong>${escapeHtml(query)}</strong><br>
-                <div style="margin-top:10px; padding:12px; border:1px solid var(--border); border-radius:10px; background:var(--bg-color);">
-                    <div style="font-weight:600; margin-bottom:6px;">Results are ready</div>
-                    <div style="color:var(--text-muted); margin-bottom:10px;">Open the results page to view the latest information.</div>
-                    <a href="${url}" target="_blank" rel="noopener noreferrer" style="display:inline-block; padding:8px 12px; border-radius:8px; background:var(--primary); color:white; text-decoration:none;">View results</a>
-                </div>`;
-        }
-        function escapeHtml(value) {
-            return String(value).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+            return `<strong>${escapeHtml(query)}</strong><br><div style="margin-top:10px; padding:12px; border:1px solid var(--border); border-radius:10px; background:var(--bg-color);"><div style="font-weight:600; margin-bottom:6px;">Results are ready</div><div style="color:var(--text-muted); margin-bottom:10px;">Open the results page to view the latest information.</div><a href="${url}" target="_blank" rel="noopener noreferrer" style="display:inline-block; padding:8px 12px; border-radius:8px; background:var(--primary); color:white; text-decoration:none;">View results</a></div>`;
         }
         function sendSimonMessage() {
             const input = document.getElementById('simon-input');
@@ -1923,6 +2113,17 @@
                 button.style.opacity = '1';
             }, 350);
         }
+
+        function escapeHtml(value) {
+            return String(value).replace(/[&<>'"]/g, ch => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            })[ch]);
+        }
+
+        renderFlashcardDecks();
+        renderFlashcards();
+        renderFlashcardStudy();
+
         function performGlobalSearch() {
             const query = document.getElementById('global-search-input').value.toLowerCase().trim();
             const container = document.getElementById('global-search-results');
@@ -1954,7 +2155,450 @@
             container.innerHTML = html || '<div class="empty-state">No matching results found.</div>';
         }
     </script>
+
+<script id="syncro-smart-note-qa">
+(function () {
+    // Smart Notes -> Q&A
+    // IMPORTANT: this is keyword-driven, not random-word-driven.
+    // It identifies meaningful subject/topic keywords, then builds questions
+    // only when a sentence contains a strong keyword and a concrete fact.
+
+    function textFromNote(note) {
+        const box = document.createElement('div');
+        box.innerHTML = note && note.text ? note.text : '';
+        return (box.innerText || box.textContent || '')
+            .replace(/\u00a0/g, ' ')
+            .replace(/\r/g, '')
+            .trim();
+    }
+
+    function clean(s) {
+        return String(s || '').replace(/\s+/g, ' ').trim();
+    }
+
+    const STOPWORDS = new Set((
+        'a an the and or but if then than so because as of to in on at by for from with without ' +
+        'is are was were be been being this that these those it its they them their he she his her ' +
+        'we you your our i me my into through during about over under after before between among ' +
+        'also very more most many much some any each every both all another other such only own ' +
+        'can could may might must should would will shall do does did have has had having ' +
+        'used use using make made get gets got give gives given take takes taking ' +
+        'which who whom where when why how what whose ' +
+        'there here then than not no yes ' +
+        'important main key major first second third next finally generally usually often sometimes ' +
+        'example examples called known means means that include includes including contains contain ' +
+        'consists composed consists-of part parts type types kind kinds form forms one two three four five'
+    ).split(/\s+/));
+
+    const QUESTION_WORDS = /^(what|where|when|why|how|who|which|define|explain|describe|state|list|identify|name|give|mention|compare)\b/i;
+
+    function normalWords(text) {
+        return clean(text)
+            .toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, ' ')
+            .split(/\s+/)
+            .filter(w => w.length >= 4 && !STOPWORDS.has(w) && !/^\d+$/.test(w));
+    }
+
+    function splitSentences(text) {
+        return String(text || '')
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<[^>]*>/g, ' ')
+            .replace(/&nbsp;/gi, ' ')
+            .split(/(?<=[.!?])\s+|\n+/)
+            .map(clean)
+            .filter(s => s.length >= 15 && s.length <= 500);
+    }
+
+    function getKeywords(text) {
+        const words = normalWords(text);
+        const freq = {};
+        words.forEach(w => freq[w] = (freq[w] || 0) + 1);
+
+        // Multi-word topic phrases are stronger than isolated words.
+        const phraseScores = {};
+        splitSentences(text).forEach(sentence => {
+            const ws = sentence.replace(/[^A-Za-z0-9\s-]/g, ' ').split(/\s+/).filter(Boolean);
+            for (let i = 0; i < ws.length - 1; i++) {
+                const a = ws[i].toLowerCase(), b = ws[i + 1].toLowerCase();
+                if (a.length >= 4 && b.length >= 4 && !STOPWORDS.has(a) && !STOPWORDS.has(b)) {
+                    const phrase = a + ' ' + b;
+                    phraseScores[phrase] = (phraseScores[phrase] || 0) + 1;
+                }
+            }
+        });
+
+        const scored = Object.keys(freq).map(word => {
+            let score = freq[word] * 2;
+            if (word.length >= 7) score += 1;
+            if (/^[A-Z]/.test(word)) score += 1;
+            return { word, score };
+        }).sort((a,b) => b.score - a.score);
+
+        const phrases = Object.keys(phraseScores)
+            .filter(p => phraseScores[p] >= 1)
+            .sort((a,b) => phraseScores[b] - phraseScores[a])
+            .slice(0, 12);
+
+        return {
+            words: scored.slice(0, 20).map(x => x.word),
+            phrases
+        };
+    }
+
+    function sentenceKeywordScore(sentence, keywords) {
+        const low = sentence.toLowerCase();
+        let score = 0;
+        keywords.words.forEach(k => {
+            if (new RegExp('\\b' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(low)) {
+                score += 2;
+            }
+        });
+        keywords.phrases.forEach(p => {
+            if (low.includes(p)) score += 4;
+        });
+        return score;
+    }
+
+    function uniqueCards(cards) {
+        const seen = new Set();
+        return cards.filter(card => {
+            const key = clean(card.front).toLowerCase() + '|' + clean(card.back).toLowerCase();
+            if (!card.front || !card.back || seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        }).slice(0, 30);
+    }
+
+    function generateQACards(text) {
+        const cards = [];
+        const seen = new Set();
+        const cleanText = clean(text);
+        if (!cleanText) return [];
+
+        const lines = String(text || '')
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<[^>]*>/g, ' ')
+            .replace(/&nbsp;/gi, ' ')
+            .split(/\n+/)
+            .map(clean)
+            .filter(x => x.length >= 8);
+
+        const sentences = splitSentences(text);
+        const keywords = getKeywords(text);
+        const rawLines = String(text || '')
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<[^>]*>/g, ' ')
+            .replace(/&nbsp;/gi, ' ')
+            .replace(/\r/g, '')
+            .split('\n')
+            .map(clean)
+            .filter(Boolean);
+
+        function add(front, back, keyword) {
+            front = clean(front);
+            back = clean(back).replace(/[.!?]+$/, '');
+            if (!front || !back || back.length < 3) return;
+            if (QUESTION_WORDS.test(front) === false) return;
+
+            // Every generated card must be anchored to a real keyword/topic.
+            if (keyword) {
+                const low = (front + ' ' + back).toLowerCase();
+                if (!low.includes(keyword.toLowerCase())) return;
+            }
+
+            const key = front.toLowerCase() + '|' + back.toLowerCase();
+            if (seen.has(key)) return;
+            seen.add(key);
+            cards.push({ front, back });
+        }
+
+        function topicWord(topic) {
+            return normalWords(topic).sort((a, b) => b.length - a.length)[0];
+        }
+
+        // 1. Headings and bullet lists. A topic heading gives otherwise short
+        // bullets useful context, so a list becomes one clear recall card.
+        let activeHeading = '';
+        const headingLists = new Map();
+        rawLines.forEach(rawLine => {
+            const isBullet = /^[•*\-–—]\s+/.test(rawLine) || /^\d+[.)]\s+/.test(rawLine);
+            const item = clean(rawLine.replace(/^(?:[•*\-–—]|\d+[.)])\s+/, ''));
+            const headingCandidate = clean(rawLine.replace(/[:：]$/, ''));
+            const isHeading = !isBullet && headingCandidate.length >= 3 && headingCandidate.length <= 75 &&
+                !/[.!?]$/.test(headingCandidate) && normalWords(headingCandidate).length >= 1;
+            if (isHeading && !/\b(is|are|was|were|because|contains|includes)\b/i.test(headingCandidate)) {
+                activeHeading = headingCandidate;
+                return;
+            }
+            if (isBullet && activeHeading && item.length >= 3) {
+                const items = headingLists.get(activeHeading) || [];
+                items.push(item);
+                headingLists.set(activeHeading, items);
+            }
+        });
+        headingLists.forEach((items, heading) => {
+            const kw = topicWord(heading) || topicWord(items.join(' '));
+            if (items.length >= 2 && kw) add(`What are the key points about ${heading}?`, items.join('; '), kw);
+        });
+
+        // 2. Common study-note forms that do not use a colon.
+        lines.forEach(line => {
+            let m = line.match(/^(.{2,100}?)\s*[-–—]\s+(.{3,500})$/);
+            if (m && !/^(definition|meaning|function|role|purpose|importance|significance|characteristic|characteristics|features|composition|components|advantages|disadvantages)$/i.test(clean(m[1]))) {
+                const subject = clean(m[1]);
+                const kw = topicWord(subject);
+                if (kw) add(`What is ${subject}?`, m[2], kw);
+            }
+
+            m = line.match(/^(.{2,120}?)\s+(?:causes|leads to|results in|produces|creates)\s+(.{3,500})$/i);
+            if (m) {
+                const subject = clean(m[1]);
+                const kw = topicWord(subject);
+                if (kw) add(`What does ${subject} lead to?`, m[2], kw);
+            }
+
+            m = line.match(/^if\s+(.{3,220}?),?\s+then\s+(.{3,400})$/i);
+            if (m) {
+                const kw = topicWord(m[1]) || topicWord(m[2]);
+                if (kw) add(`What happens if ${m[1]}?`, m[2], kw);
+            }
+
+            m = line.match(/^(.{2,100}?)\s+(?:is|are)\s+also\s+known\s+as\s+(.{2,180})$/i);
+            if (m) {
+                const subject = clean(m[1]);
+                const kw = topicWord(subject);
+                if (kw) add(`What is another name for ${subject}?`, m[2], kw);
+            }
+        });
+
+        // 3. Explicit "Topic: fact" notes are the strongest source.
+        lines.forEach(line => {
+            let m = line.match(/^([^:]{2,90}):\s*(.{3,500})$/);
+            if (m) {
+                const topic = clean(m[1]);
+                const fact = clean(m[2]);
+                const topicWord = normalWords(topic)[0];
+                if (topicWord) add(`What is ${topic}?`, fact, topicWord);
+            }
+        });
+
+        // 4. Strong definition statements: "X is/are Y".
+        lines.forEach(line => {
+            let m = line.match(/^(.{2,100}?)\s+(is|are)\s+(.{3,500})$/i);
+            if (m) {
+                const subject = clean(m[1]).replace(/^(the|a|an)\s+/i, '');
+                const fact = clean(m[3]);
+                const kw = normalWords(subject).sort((a,b) => b.length-a.length)[0];
+                if (!kw || STOPWORDS.has(kw)) return;
+                add(`What is ${subject}?`, fact, kw);
+            }
+        });
+
+        // 5. Composition statements.
+        lines.forEach(line => {
+            let m = line.match(/^(.{2,100}?)\s+(contains|includes|consists of|is composed of|is made up of)\s+(.{3,500})$/i);
+            if (m) {
+                const subject = clean(m[1]);
+                const kw = normalWords(subject).sort((a,b) => b.length-a.length)[0];
+                if (kw) add(`What does ${subject} contain?`, m[3], kw);
+            }
+        });
+
+        // 6. Function/action statements.
+        lines.forEach(line => {
+            let m = line.match(/^(.{2,100}?)\s+(helps|allows|enables|controls|regulates|produces|releases|absorbs|uses|requires|needs|prevents|protects|provides|stores|carries|breaks down|converts)\s+(.{3,500})$/i);
+            if (m) {
+                const subject = clean(m[1]);
+                const kw = normalWords(subject).sort((a,b) => b.length-a.length)[0];
+                if (kw) add(`What is the role of ${subject}?`, `${m[2]} ${m[3]}`, kw);
+            }
+        });
+
+        // 7. Cause/reason statements.
+        lines.forEach(line => {
+            let m = line.match(/^(.{3,180}?)\s+because\s+(.{3,400})$/i);
+            if (m) {
+                const subject = clean(m[1]);
+                const kw = normalWords(subject).sort((a,b) => b.length-a.length)[0];
+                if (kw) add(`Why does ${subject}?`, m[2], kw);
+            }
+        });
+
+        // 8. Purpose statements.
+        lines.forEach(line => {
+            let m = line.match(/^(.{2,120}?)\s+(?:is|are)\s+(?:used|needed|required)\s+(?:to|for)\s+(.{3,400})$/i);
+            if (m) {
+                const subject = clean(m[1]);
+                const kw = normalWords(subject).sort((a,b) => b.length-a.length)[0];
+                if (kw) add(`Why is ${subject} used?`, m[2], kw);
+            }
+        });
+
+        // 9. Labelled facts such as "Function - ..." or "Composition: ...".
+        lines.forEach(line => {
+            const m = line.match(/^(definition|meaning|function|role|purpose|importance|significance|characteristic|characteristics|features|composition|components|advantages|disadvantages)\s*[-–—:]\s*(.{3,500})$/i);
+            if (!m) return;
+
+            const label = m[1].toLowerCase();
+            const fact = clean(m[2]);
+            const kws = normalWords(fact).sort((a,b) => b.length-a.length);
+            const kw = kws[0];
+            if (!kw) return;
+
+            if (label === 'function' || label === 'role' || label === 'purpose') {
+                add(`What is the function described in the notes?`, fact, kw);
+            } else {
+                add(`What does ${label} refer to in the notes?`, fact, kw);
+            }
+        });
+
+        // 10. Plain factual sentences:
+        // ONLY use sentences that contain one of the strongest extracted keywords.
+        // This prevents random/common words from becoming questions.
+        const candidates = sentences
+            .map(s => ({ s, score: sentenceKeywordScore(s, keywords) }))
+            .filter(x => x.score >= 2)
+            .sort((a,b) => b.score - a.score);
+
+        candidates.forEach(({s}) => {
+            if (cards.length >= 30) return;
+            if (QUESTION_WORDS.test(s)) return;
+
+            // Prefer a keyword that actually appears in the sentence.
+            const low = s.toLowerCase();
+            const keyword = keywords.words
+                .filter(k => new RegExp('\\b' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(low))
+                .sort((a,b) => b.length - a.length)[0];
+
+            if (!keyword) return;
+
+            // If sentence has "X is Y", use the actual X as the topic.
+            let m = s.match(/^(.{2,100}?)\s+(is|are|was|were)\s+(.{5,400})$/i);
+            if (m) {
+                const subject = clean(m[1]).replace(/^(the|a|an)\s+/i, '');
+                add(`What is ${subject}?`, m[3], keyword);
+                return;
+            }
+
+            // Otherwise ask about the actual keyword, never "what is an important fact".
+            const display = keyword.replace(/\b\w/g, c => c.toUpperCase());
+            add(`What is the significance of ${display} in the notes?`, s, keyword);
+        });
+
+        return uniqueCards(cards);
+    }
+
+    window.refreshSmartNotePicker = function () {
+        const select = document.getElementById('smart-note-select');
+        if (!select) return;
+
+        const previous = select.value;
+        select.innerHTML = '<option value="">Choose a saved note...</option>';
+
+        (Array.isArray(window.notes) ? window.notes : []).forEach((note, index) => {
+            const body = textFromNote(note);
+            if (!body) return;
+
+            const option = document.createElement('option');
+            option.value = String(index);
+            option.textContent =
+                `${note.dateLabel || 'Saved note'} — ${body.split(/\n/)[0].slice(0, 70)}`;
+            select.appendChild(option);
+        });
+
+        if ([...select.options].some(o => o.value === previous)) {
+            select.value = previous;
+        }
+    };
+
+    window.smartMakeQAFromSavedNote = function () {
+        const select = document.getElementById('smart-note-select');
+        const preview = document.getElementById('smart-qa-preview');
+
+        if (!select || select.value === '') {
+            preview.innerHTML = '<p>⚠️ Choose a saved note first.</p>';
+            return;
+        }
+
+        const note = window.notes[Number(select.value)];
+        const cards = generateQACards(textFromNote(note));
+
+        if (!cards.length) {
+            preview.innerHTML =
+                '<p>⚠️ No strong keyword-based facts were found. Add clearer topic/fact sentences to the note.</p>';
+            return;
+        }
+
+        window._smartGeneratedCards = cards;
+
+        preview.innerHTML =
+            `<div style="font-weight:600;margin-bottom:8px;">${cards.length} keyword-based Q&A card${cards.length === 1 ? '' : 's'} generated</div>` +
+            cards.map((c, i) => `
+                <div style="padding:10px 12px;margin:7px 0;border:1px solid var(--border);border-radius:10px;">
+                    <div><strong>Q${i + 1}:</strong> ${escapeHtml(c.front)}</div>
+                    <div style="margin-top:5px;"><strong>A:</strong> ${escapeHtml(c.back)}</div>
+                </div>
+            `).join('') +
+            `<button class="btn-primary" type="button" onclick="smartAddGeneratedCards()">
+                ➕ Add All to Flashcards
+            </button>`;
+    };
+
+    window.smartAddGeneratedCards = function () {
+        const cards = Array.isArray(window._smartGeneratedCards) ? window._smartGeneratedCards : [];
+        if (!cards.length) return;
+
+        if (!Array.isArray(window.flashcards)) window.flashcards = [];
+
+        cards.forEach(card => {
+            window.flashcards.push({
+                id: Date.now().toString() + Math.random().toString(36).slice(2),
+                deckId: activeFlashcardDeckId,
+                front: card.front,
+                back: card.back
+            });
+        });
+
+        saveFlashcards();
+        renderFlashcards();
+        renderFlashcardStudy();
+
+        const preview = document.getElementById('smart-qa-preview');
+        if (preview) {
+            preview.insertAdjacentHTML(
+                'beforeend',
+                `<p style="margin-top:10px;color:var(--success);font-weight:600;">
+                    ✅ Added ${cards.length} card${cards.length === 1 ? '' : 's'} to Flashcards.
+                </p>`
+            );
+        }
+        window._smartGeneratedCards = [];
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        refreshSmartNotePicker();
+
+        const originalSwitchMainTab = window.switchMainTab;
+        if (typeof originalSwitchMainTab === 'function') {
+            window.switchMainTab = function () {
+                const result = originalSwitchMainTab.apply(this, arguments);
+                setTimeout(refreshSmartNotePicker, 0);
+                return result;
+            };
+        }
+
+        const originalAddNote = window.addNote;
+        if (typeof originalAddNote === 'function') {
+            window.addNote = function () {
+                const result = originalAddNote.apply(this, arguments);
+                setTimeout(refreshSmartNotePicker, 0);
+                return result;
+            };
+        }
+    });
+})();
+</script>
+
 </body>
 </html>
-
-```
