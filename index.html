@@ -591,6 +591,12 @@
 </head>
 <body>
     <canvas id="confetti-canvas"></canvas>
+    <!-- Tamper-Deterrent Overlay (shown while developer tools appear open) -->
+    <div id="devtools-guard-overlay" style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(15,23,42,0.97); color:#f8fafc; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        <div style="font-size:2.2rem; margin-bottom:10px;">🔒</div>
+        <h2 style="font-size:1.3rem; margin-bottom:8px;">Developer tools detected</h2>
+        <p style="max-width:420px; color:#94a3b8; font-size:0.9rem; line-height:1.5;">For your security, Syncro is paused while developer tools appear to be open. Close the developer tools panel to continue using the app.</p>
+    </div>
     <!-- Audio Element -->
     <audio id="break-audio" loop src="https://actions.google.com/sounds/v1/ambiences/outdoor_gentle_breeze.ogg"></audio>
     <!-- Celebration Modal -->
@@ -670,6 +676,12 @@
                 <button class="btn-delete" style="font-size:1.5rem;" onclick="closeThemePicker()" aria-label="Close themes">&times;</button>
             </div>
             <div id="theme-picker-grid" class="theme-picker-grid"></div>
+            <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border); display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                <button class="btn-secondary" type="button" onclick="document.getElementById('custom-bg-input').click()">🖼️ Upload Custom Background</button>
+                <input type="file" id="custom-bg-input" accept="image/*" style="display:none;" onchange="handleCustomBackgroundUpload(event)">
+                <button class="btn-secondary" type="button" onclick="clearCustomBackground()">Remove Custom Background</button>
+                <span id="custom-bg-status" style="font-size:.78rem; color:var(--text-muted);"></span>
+            </div>
         </div>
     </div>
     <!-- Global Workspace Search -->
@@ -1613,9 +1625,54 @@
             root.setProperty('--text-main', theme.text);
             root.setProperty('--text-muted', theme.muted);
             root.setProperty('--border', theme.border);
-            document.body.style.background = `linear-gradient(135deg, ${theme.bg} 0%, ${theme.card} 100%)`;
+            // Use live CSS variable references (not literal hex values) so the
+            // page background reacts automatically when dark mode is toggled,
+            // instead of being frozen at whatever colors were active when the
+            // theme was first applied.
+            const customBg = localStorage.getItem('syncro_custom_bg');
+            if (customBg) {
+                applyCustomBackground(customBg);
+            } else {
+                document.body.style.backgroundImage = '';
+                document.body.style.background = `linear-gradient(135deg, var(--bg-color) 0%, var(--card-bg) 100%)`;
+            }
             if (save) localStorage.setItem('syncro_theme', theme.id);
             renderThemePicker();
+        }
+        // --- Custom Background ---
+        function applyCustomBackground(dataUrl) {
+            document.body.style.backgroundImage = `url("${dataUrl}")`;
+            document.body.style.backgroundSize = 'cover';
+            document.body.style.backgroundPosition = 'center';
+            document.body.style.backgroundAttachment = 'fixed';
+            document.body.style.backgroundRepeat = 'no-repeat';
+        }
+        function handleCustomBackgroundUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (evt) {
+                localStorage.setItem('syncro_custom_bg', evt.target.result);
+                applyCustomBackground(evt.target.result);
+                updateCustomBgStatus();
+            };
+            reader.readAsDataURL(file);
+            e.target.value = '';
+        }
+        function clearCustomBackground() {
+            localStorage.removeItem('syncro_custom_bg');
+            document.body.style.backgroundImage = '';
+            document.body.style.backgroundSize = '';
+            document.body.style.backgroundPosition = '';
+            document.body.style.backgroundAttachment = '';
+            document.body.style.backgroundRepeat = '';
+            document.body.style.background = `linear-gradient(135deg, var(--bg-color) 0%, var(--card-bg) 100%)`;
+            updateCustomBgStatus();
+        }
+        function updateCustomBgStatus() {
+            const status = document.getElementById('custom-bg-status');
+            if (!status) return;
+            status.textContent = localStorage.getItem('syncro_custom_bg') ? 'Custom background active' : 'No custom background set';
         }
         function renderThemePicker() {
             const grid = document.getElementById('theme-picker-grid');
@@ -1623,8 +1680,13 @@
             const activeId = localStorage.getItem('syncro_theme') || 'default';
             grid.innerHTML = syncroThemes.map(theme => `<button class="theme-choice ${theme.id === activeId ? 'active' : ''}" type="button" onclick="applySyncroTheme('${theme.id}')"><span class="theme-swatch" style="background:linear-gradient(135deg,${theme.primary},${theme.border});"></span><span><span class="theme-choice-name">${theme.emoji} ${theme.name}</span><span class="theme-choice-category">${theme.category}</span></span></button>`).join('');
         }
-        function openThemePicker() { renderThemePicker(); document.getElementById('themes-modal').classList.add('show'); }
+        function openThemePicker() { renderThemePicker(); updateCustomBgStatus(); document.getElementById('themes-modal').classList.add('show'); }
         function closeThemePicker() { document.getElementById('themes-modal').classList.remove('show'); }
+        // Restore dark mode BEFORE the theme paints, so the very first frame
+        // is already correct instead of flashing light mode then switching.
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
         applySyncroTheme(localStorage.getItem('syncro_theme') || 'default', false);
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
@@ -2671,6 +2733,100 @@
             };
         }
     });
+})();
+</script>
+
+<!-- ============================================================
+     TAMPER-DETERRENT LAYER
+     This is a deterrent, not real security. Anything running in
+     a user's own browser can always be read, edited, or bypassed
+     by someone determined enough (view-source, browser devtools,
+     saving the page, disabling JS, etc). This layer only raises
+     the bar for casual tampering and casual copying — it does
+     not encrypt data, authenticate users, or protect against a
+     motivated attacker with local access to the device.
+     ============================================================ -->
+<script id="syncro-tamper-deterrent">
+(function () {
+    // 1. Block the right-click context menu (deters "View Page Source" /
+    //    "Inspect" via right click). Does nothing against keyboard shortcuts
+    //    or the browser's own menus.
+    document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+    });
+
+    // 2. Block common developer-tools / view-source keyboard shortcuts.
+    document.addEventListener('keydown', function (e) {
+        const key = (e.key || '').toUpperCase();
+        const blockCombo =
+            key === 'F12' ||
+            (e.ctrlKey && e.shiftKey && (key === 'I' || key === 'J' || key === 'C')) ||
+            (e.metaKey && e.altKey && (key === 'I' || key === 'J' || key === 'C')) || // Mac Cmd+Opt+I/J/C
+            (e.ctrlKey && key === 'U') || // View source
+            (e.metaKey && e.altKey && key === 'U');
+        if (blockCombo) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }, true);
+
+    // 3. Best-effort devtools-open detection. There is no reliable, official
+    //    way to detect an open devtools panel — this uses a timing trick
+    //    (a debugger statement takes noticeably longer to step over while
+    //    devtools is open and paused on it) plus a window-size heuristic as
+    //    a fallback. Both can be evaded; this only deters casual use.
+    const overlay = document.getElementById('devtools-guard-overlay');
+    let guardActive = false;
+
+    function showGuard() {
+        if (guardActive) return;
+        guardActive = true;
+        if (overlay) overlay.style.display = 'flex';
+    }
+    function hideGuard() {
+        if (!guardActive) return;
+        guardActive = false;
+        if (overlay) overlay.style.display = 'none';
+    }
+
+    function sizeHeuristicTripped() {
+        const threshold = 160;
+        const widthGap = window.outerWidth - window.innerWidth;
+        const heightGap = window.outerHeight - window.innerHeight;
+        return widthGap > threshold || heightGap > threshold;
+    }
+
+    function timingHeuristicTripped() {
+        const start = performance.now();
+        // eslint-disable-next-line no-debugger
+        debugger;
+        const elapsed = performance.now() - start;
+        return elapsed > 100; // devtools paused on the statement noticeably longer
+    }
+
+    setInterval(function () {
+        try {
+            if (sizeHeuristicTripped() || timingHeuristicTripped()) {
+                showGuard();
+            } else {
+                hideGuard();
+            }
+        } catch (err) {
+            // Never let a detection error break the app itself.
+        }
+    }, 1000);
+
+    // 4. Self-XSS warning: the single biggest real-world risk for an app
+    //    like this is a user being tricked into pasting attacker-supplied
+    //    code into their own console. This warning is a genuine, widely
+    //    used mitigation (the same one big sites show).
+    const warningStyle = 'color:#ef4444; font-size:28px; font-weight:bold; -webkit-text-stroke:1px black;';
+    const bodyStyle = 'font-size:16px; line-height:1.5;';
+    console.log('%cStop!', warningStyle);
+    console.log(
+        '%cThis is a browser feature intended for developers. If someone told you to copy and paste something here to unlock a feature, view someone else\'s data, or "hack" this app, it is a scam and will give them access to your data, not you.',
+        bodyStyle
+    );
 })();
 </script>
 
