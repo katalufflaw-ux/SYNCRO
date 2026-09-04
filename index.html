@@ -440,6 +440,10 @@
             line-height: 1.5;
         }
         .note-content { flex-grow: 1; padding-right: 12px; overflow-x: auto; }
+        .note-title { font-weight:700; font-size:1rem; cursor:pointer; color:var(--text-main); }
+        .note-title:hover { color:var(--primary); }
+        .note-preview { display:none; margin-top:10px; }
+        .note-preview.open { display:block; }
         .note-time { display: block; font-size: 0.75rem; color: var(--text-muted); margin-top: 10px; }
         .note-actions {
             display: flex;
@@ -758,6 +762,7 @@
             <!-- WORD WORKSPACE -->
             <div id="workspace-word" class="file-workspace active">
                 <div class="card" id="notes-card-container">
+                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;"><input type="text" id="word-note-title" placeholder="Title" style="flex:1;"></div>
                     <div class="editor-container" id="editor-container-main">
                         <div class="word-ribbon">
                             <div class="ribbon-group">
@@ -811,6 +816,7 @@
             <!-- POWERPOINT WORKSPACE -->
             <div id="workspace-ppt" class="file-workspace">
                 <div class="card">
+                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;"><input type="text" id="ppt-note-title" placeholder="Title" style="flex:1;"></div>
                     <div class="editor-container" id="editor-container-ppt">
                         <div class="office-ribbon-tabs">
                             <button class="office-tab-btn" onclick="switchPptTab('file')">File</button>
@@ -920,6 +926,7 @@
             <!-- EXCEL WORKSPACE -->
             <div id="workspace-excel" class="file-workspace">
                 <div class="card">
+                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;"><input type="text" id="excel-note-title" placeholder="Title" style="flex:1;"></div>
                     <div class="editor-container" id="editor-container-excel">
                         <div class="office-ribbon-tabs">
                             <button class="office-tab-btn" onclick="switchExcelTab('file')">File</button>
@@ -1520,7 +1527,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `Document_${note.id}.doc`;
+            a.download = `${(note.title || 'Document').replace(/[^a-z0-9 _-]/gi, '_')}.doc`;
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -1704,21 +1711,27 @@
             if (tabName === 'simon') renderSimonChat();
         }
         function addNote() {
-            const editor = document.getElementById('note-editor');
-            const htmlContent = editor.innerHTML.trim();
+            const activeType = document.querySelector('.file-type-btn.active')?.textContent.includes('PowerPoint') ? 'ppt' : document.querySelector('.file-type-btn.active')?.textContent.includes('Excel') ? 'excel' : 'word';
+            const titleInput = document.getElementById(activeType + '-note-title');
+            const title = titleInput.value.trim() || (activeType === 'ppt' ? 'Untitled Presentation' : activeType === 'excel' ? 'Untitled Spreadsheet' : 'Untitled Document');
+            let htmlContent = '';
+            if (activeType === 'word') htmlContent = document.getElementById('note-editor').innerHTML.trim();
+            if (activeType === 'ppt') htmlContent = document.getElementById('ppt-editor').innerHTML.trim();
+            if (activeType === 'excel') htmlContent = document.getElementById('excel-spreadsheet').outerHTML;
             if (!htmlContent || htmlContent === '<br>') return;
             const now = new Date();
-            window.notes.unshift({
-                id: Date.now().toString(),
-                dateKey: formatDateKey(now),
-                dateLabel: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-                text: htmlContent,
-                time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            });
+            window.notes.unshift({ id: Date.now().toString(), type: activeType, title, dateKey: formatDateKey(now), dateLabel: now.toLocaleDateString('en-US',{month:'short',day:'numeric'}), text: htmlContent, time: now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) });
             saveData();
-            editor.innerHTML = '';
+            titleInput.value = '';
+            if (activeType === 'word') document.getElementById('note-editor').innerHTML = '';
+            if (activeType === 'ppt') document.getElementById('ppt-editor').innerHTML = '';
+            if (activeType === 'excel') document.querySelectorAll('#excel-spreadsheet td').forEach(td => td.innerHTML='');
             renderAllNotes();
-            alert("File saved successfully!");
+            alert('File saved successfully!');
+        }
+        function toggleSavedNote(id) {
+            const preview = document.getElementById('note-preview-' + id);
+            if (preview) preview.classList.toggle('open');
         }
         function deleteNote(id) {
             window.notes = window.notes.filter(n => n.id !== id);
@@ -1731,23 +1744,9 @@
             const container = document.getElementById('all-notes-container');
             container.innerHTML = window.notes.length === 0 ? '<div class="empty-state">No saved documents found.</div>' : '';
             window.notes.forEach(note => {
-                const div = document.createElement('div');
-                div.className = 'note';
-                div.innerHTML = `
-                    <div class="note-content">
-                        <div>${note.text}</div>
-                        <span class="note-time">${note.dateLabel} • ${note.time}</span>
-                    </div>
-                    <div class="note-actions">
-                        <button class="btn-action" onclick="downloadSingleNote('${note.id}')" title="Download Document">
-                            <svg class="icon-svg" viewBox="0 0 24 24">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                        </button>
-                        <button class="btn-delete" onclick="deleteNote('${note.id}')" title="Delete">&times;</button>
-                    </div>`;
+                const div = document.createElement('div'); div.className='note';
+                const safeTitle = note.title || 'Untitled Document';
+                div.innerHTML = `<div class="note-content"><div class="note-title" onclick="toggleSavedNote('${note.id}')">${safeTitle}</div><div id="note-preview-${note.id}" class="note-preview">${note.text}</div><span class="note-time">${note.dateLabel} • ${note.time}</span></div><div class="note-actions"><button class="btn-action" onclick="downloadSingleNote('${note.id}')" title="Download Document">Download</button><button class="btn-delete" onclick="deleteNote('${note.id}')" title="Delete">&times;</button></div>`;
                 container.appendChild(div);
             });
         }
